@@ -1,0 +1,50 @@
+interface EmbedBlockProps {
+  props: Record<string, unknown>;
+}
+
+function toEmbedUrl(url: string): string {
+  const youtubeMatch = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/
+  );
+  if (youtubeMatch) {
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}`;
+  }
+
+  const vimeoMatch = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeoMatch) {
+    return `https://player.vimeo.com/video/${vimeoMatch[1]}`;
+  }
+
+  return url;
+}
+
+export function EmbedBlock({ props }: EmbedBlockProps) {
+  const url = (props.url as string) ?? "";
+  const title = (props.title as string) ?? "Embedded content";
+  const aspectRatio = (props.aspectRatio as string) ?? "16/9";
+
+  if (!url) return null;
+
+  const maxWidth = (props.maxWidth as string) ?? "sm";
+  const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
+  const embedUrl = toEmbedUrl(url);
+
+  return (
+    <section className="py-12">
+      <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-4xl"} px-16`}>
+        <div
+          className="relative w-full overflow-hidden rounded-lg"
+          style={{ aspectRatio }}
+        >
+          <iframe
+            src={embedUrl}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}

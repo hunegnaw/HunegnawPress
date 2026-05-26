@@ -1,0 +1,154 @@
+"use client";
+
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { LogIn, Menu, X } from "lucide-react";
+import { useOrganization } from "@/components/providers/organization-provider";
+
+interface NavLink {
+  href: string;
+  label: string;
+}
+
+interface MarketingHeaderProps {
+  transparent?: boolean;
+  navLinks?: NavLink[];
+}
+
+export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: MarketingHeaderProps) {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const org = useOrganization();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const solid = !transparent || scrolled;
+  const btnColor = solid ? org.secondaryColor : "#ffffff";
+  const currentLogo = solid ? (org.logoScrolledUrl || org.logoUrl) : org.logoUrl;
+
+  const logoHref = "/";
+
+  const navLinks = navLinksProp && navLinksProp.length > 0
+    ? navLinksProp
+    : [{ href: "/", label: "Home" }];
+
+  return (
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
+        solid ? "bg-slate-800" : "bg-transparent"
+      }`}
+    >
+      <nav className="w-full px-16 py-4 flex items-center justify-between">
+        {/* Logo */}
+        <Link
+          href={logoHref}
+          className={currentLogo ? "block" : "font-bold text-white text-sm tracking-widest uppercase border border-white/40 px-3 py-1.5 transition-colors hover:border-white/70"}
+        >
+          {currentLogo ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={currentLogo}
+              alt={org.name}
+              className="h-8 w-auto object-contain"
+            />
+          ) : (
+            org.name || "HunegnawPress"
+          )}
+        </Link>
+
+        {/* Center nav — desktop */}
+        <div className="hidden md:flex items-center gap-8" style={{ fontFamily: "var(--font-body-family, Inter), sans-serif" }}>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-white/70 hover:text-white text-sm transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Right — desktop login */}
+        <div className="hidden md:block">
+          <Link
+            href="/login"
+            className="px-4 py-1.5 text-sm flex items-center gap-2 transition-colors"
+            style={{
+              borderWidth: 1,
+              borderStyle: "solid",
+              borderColor: btnColor,
+              color: btnColor,
+              fontFamily: "var(--font-body-family, Inter), sans-serif",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = solid ? btnColor : "#2563eb";
+              e.currentTarget.style.borderColor = solid ? btnColor : "#2563eb";
+              e.currentTarget.style.color = "#ffffff";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.borderColor = btnColor;
+              e.currentTarget.style.color = btnColor;
+            }}
+          >
+            <LogIn className="h-4 w-4" />
+            Login
+          </Link>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          type="button"
+          className="md:hidden text-white"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+        >
+          {mobileOpen ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <Menu className="h-6 w-6" />
+          )}
+        </button>
+      </nav>
+
+      {/* Mobile dropdown */}
+      {mobileOpen && (
+        <div className="md:hidden bg-slate-800 border-t border-white/10 px-16 pb-6 pt-2 space-y-4" style={{ fontFamily: "var(--font-body-family, Inter), sans-serif" }}>
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="block text-white/70 hover:text-white text-sm transition-colors"
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link
+            href="/login"
+            className="px-4 py-1.5 text-sm inline-flex items-center gap-2 transition-colors"
+            style={{
+              borderWidth: 1,
+              borderStyle: "solid",
+              borderColor: org.secondaryColor,
+              color: org.secondaryColor,
+              fontFamily: "var(--font-body-family, Inter), sans-serif",
+            }}
+            onClick={() => setMobileOpen(false)}
+          >
+            <LogIn className="h-4 w-4" />
+            Login
+          </Link>
+        </div>
+      )}
+    </header>
+  );
+}

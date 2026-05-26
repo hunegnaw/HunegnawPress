@@ -1,0 +1,82 @@
+import { resolveBlockFontVars } from "@/lib/block-fonts";
+
+interface Logo {
+  imageUrl: string;
+  alt: string;
+  url?: string;
+}
+
+interface LogoGalleryBlockProps {
+  props: Record<string, unknown>;
+}
+
+const COLUMNS_MAP: Record<number, string> = {
+  2: "grid-cols-2",
+  3: "grid-cols-3",
+  4: "grid-cols-2 md:grid-cols-4",
+  5: "grid-cols-2 md:grid-cols-5",
+  6: "grid-cols-3 md:grid-cols-6",
+};
+
+export function LogoGalleryBlock({ props }: LogoGalleryBlockProps) {
+  const heading = (props.heading as string) ?? "";
+  const headingColor = (props.headingColor as string) || "";
+  const logos = (props.logos as Logo[]) ?? [];
+  const columns = (props.columns as number) ?? 4;
+  const grayscale = (props.grayscale as boolean) ?? false;
+  const backgroundColor = (props.backgroundColor as string) || undefined;
+
+  const columnsClass = COLUMNS_MAP[columns] ?? "grid-cols-2 md:grid-cols-4";
+  const maxWidth = (props.maxWidth as string) ?? "lg";
+  const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
+
+  const headingFont = resolveBlockFontVars((props.headingFont as string) || "", "h2");
+
+  return (
+    <section className="py-20" style={{ backgroundColor }}>
+      <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-6xl"} px-16`}>
+        {heading && (
+          <h2
+            className="heading-light mb-14 text-center leading-[1.15]"
+            style={{
+              color: headingColor || undefined,
+              ...(headingFont ?? {}),
+            }}
+            dangerouslySetInnerHTML={{ __html: heading }}
+          />
+        )}
+        <div
+          className={`grid ${columnsClass} items-center gap-8`}
+        >
+          {logos.filter((l) => l.imageUrl).map((logo, index) => {
+            const img = (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={logo.imageUrl}
+                alt={logo.alt}
+                className={`mx-auto h-16 w-auto object-contain ${
+                  grayscale
+                    ? "grayscale transition hover:grayscale-0"
+                    : ""
+                }`}
+              />
+            );
+
+            return logo.url ? (
+              <a
+                key={index}
+                href={logo.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {img}
+              </a>
+            ) : (
+              <div key={index}>{img}</div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}

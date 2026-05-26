@@ -1,0 +1,84 @@
+import { resolveBlockFont } from "@/lib/block-fonts";
+
+interface QuoteBlockProps {
+  props: Record<string, unknown>;
+}
+
+export function QuoteBlock({ props }: QuoteBlockProps) {
+  const quote = (props.text as string) ?? "";
+  const attribution = (props.attribution as string) ?? "";
+  const role = (props.role as string) ?? "";
+  const quoteColor = (props.quoteColor as string) || "#0f172ae6";
+  const attributionColor = (props.attributionColor as string) || "#0f172a";
+  const roleColor = (props.roleColor as string) || "#64748b";
+  const backgroundColor = (props.backgroundColor as string) || undefined;
+  const maxWidth = (props.maxWidth as string) ?? "sm";
+  const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
+
+  const quoteFont = resolveBlockFont((props.quoteFont as string) || "");
+  const attributionFont = resolveBlockFont((props.attributionFont as string) || "");
+  const roleFont = resolveBlockFont((props.roleFont as string) || "");
+
+  return (
+    <section className="py-20" style={{ backgroundColor }}>
+      <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-4xl"} px-16`}>
+        <blockquote
+          className="border-l pl-6"
+          style={{ borderColor: "rgba(37,99,235,0.3)" }}
+        >
+          <p
+            className="leading-[1.3]"
+            style={{
+              fontFamily: "var(--font-hero-title-family, 'Inter'), sans-serif",
+              fontWeight: 300,
+              fontStyle: "italic",
+              fontSize: "clamp(24px, 3vw, 36px)",
+              color: quoteColor,
+              ...(quoteFont ?? {}),
+            }}
+          >
+            &ldquo;{quote}&rdquo;
+          </p>
+          {(attribution || role) && (
+            <footer className="mt-6 flex items-center gap-3">
+              <span
+                className="inline-block h-px w-6"
+                style={{ backgroundColor: "#2563eb" }}
+              />
+              <div>
+                {attribution && (
+                  <cite
+                    className="not-italic"
+                    style={{
+                      fontFamily: "var(--font-body-family, Inter), sans-serif",
+                      fontSize: "12px",
+                      fontWeight: 500,
+                      color: attributionColor,
+                      ...(attributionFont ?? {}),
+                    }}
+                  >
+                    {attribution}
+                  </cite>
+                )}
+                {role && (
+                  <span
+                    className="block"
+                    style={{
+                      fontFamily: "var(--font-body-family, Inter), sans-serif",
+                      fontSize: "11px",
+                      fontWeight: 300,
+                      color: roleColor,
+                      ...(roleFont ?? {}),
+                    }}
+                  >
+                    {role}
+                  </span>
+                )}
+              </div>
+            </footer>
+          )}
+        </blockquote>
+      </div>
+    </section>
+  );
+}

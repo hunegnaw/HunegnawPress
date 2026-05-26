@@ -1,0 +1,432 @@
+// HunegnawPress — Prisma Schema
+// Database: MySQL/MariaDB
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ============================================================
+// AUTH & USER MODELS
+// ============================================================
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+}
+
+enum AdminSubRole {
+  FULL_ACCESS
+  READ_ONLY
+  DATA_ENTRY
+}
+
+enum AccountStatus {
+  ACTIVE
+  PENDING
+  SUSPENDED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  name          String?
+  role          Role      @default(ADMIN)
+  accountStatus AccountStatus @default(ACTIVE)
+  adminSubRole  AdminSubRole?
+  phone         String?
+  profileImageUrl String?
+
+  // 2FA
+  twoFactorEnabled  Boolean @default(false)
+  twoFactorVerified Boolean @default(false)
+
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastLoginAt DateTime?
+
+  // Soft delete
+  deletedAt DateTime?
+
+  // Relations
+  accounts          Account[]
+  sessions          Session[]
+  twoFactorSecret   TwoFactorSecret?
+  backupCodes       BackupCode[]
+  auditLogs         AuditLog[]
+  mediaUploads      Media[]
+  blogPosts         BlogPost[]
+
+  @@index([email])
+  @@index([role])
+  @@index([deletedAt])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+model TwoFactorSecret {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  secret    String
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BackupCode {
+  id        String    @id @default(cuid())
+  userId    String
+  codeHash  String
+  used      Boolean   @default(false)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ============================================================
+// ORGANIZATION (SITE SETTINGS)
+// ============================================================
+
+model Organization {
+  id              String  @id @default(cuid())
+  name            String
+  legalName       String?
+  logoUrl         String?
+  logoScrolledUrl String?
+  faviconUrl      String?
+  primaryColor    String  @default("#334155")
+  secondaryColor  String  @default("#2563eb")
+  accentColor     String  @default("#3b82f6")
+
+  // Contact
+  email           String?
+  phone           String?
+  website         String?
+  address         String? @db.Text
+
+  // Compliance
+  disclaimer      String? @db.Text
+  privacyPolicy   String? @db.Text
+  termsOfService  String? @db.Text
+
+  // Typography
+  typography      Json?
+
+  // Footer
+  footer          Json?
+
+  // Saved Colors (color picker palette)
+  savedColors     Json?
+
+  // 2FA Policy
+  twoFactorPolicy String  @default("optional") // mandatory | optional | disabled
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================
+// AUDIT & SYSTEM
+// ============================================================
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  userId        String?
+  action        String
+  targetType    String
+  targetId      String?
+  details       Json?
+  ipAddress     String?
+  userAgent     String?  @db.Text
+  requestMethod String?
+  requestPath   String?
+  createdAt     DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([targetType])
+  @@index([createdAt])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}
+
+// ============================================================
+// MEDIA LIBRARY
+// ============================================================
+
+model Media {
+  id         String    @id @default(cuid())
+  fileName   String
+  filePath   String
+  fileSize   Int
+  mimeType   String
+  width      Int?
+  height     Int?
+  alt        String?
+  caption    String?   @db.Text
+  uploadedBy String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  uploader   User        @relation(fields: [uploadedBy], references: [id])
+  pageBlocks PageBlock[]
+
+  @@index([uploadedBy])
+  @@index([mimeType])
+  @@index([deletedAt])
+}
+
+// ============================================================
+// BLOG SYSTEM
+// ============================================================
+
+model BlogPost {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  content      String    @db.LongText
+  excerpt      String?   @db.Text
+  heroImageUrl String?
+  authorId     String
+  viewCount    Int       @default(0)
+  sortOrder    Int       @default(0)
+  readTime     Int?
+  isPublished  Boolean   @default(false)
+  isDraft      Boolean   @default(true)
+  publishedAt  DateTime?
+  // SEO
+  metaTitle       String?
+  metaDescription String? @db.Text
+  ogImageUrl      String?
+  // Timestamps
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  author     User               @relation(fields: [authorId], references: [id])
+  categories BlogPostCategory[]
+  tags       BlogPostTag[]
+
+  @@index([slug])
+  @@index([authorId])
+  @@index([isPublished])
+  @@index([publishedAt])
+  @@index([deletedAt])
+}
+
+model BlogCategory {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  color     String?
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  posts BlogPostCategory[]
+
+  @@index([slug])
+  @@index([deletedAt])
+}
+
+model BlogPostCategory {
+  id         String @id @default(cuid())
+  postId     String
+  categoryId String
+
+  post     BlogPost     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, categoryId])
+  @@index([postId])
+  @@index([categoryId])
+}
+
+model BlogTag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  color     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  posts BlogPostTag[]
+
+  @@index([slug])
+}
+
+model BlogPostTag {
+  id     String @id @default(cuid())
+  postId String
+  tagId  String
+
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag  BlogTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tagId])
+  @@index([postId])
+  @@index([tagId])
+}
+
+// ============================================================
+// CMS PAGES
+// ============================================================
+
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Page {
+  id         String     @id @default(cuid())
+  title      String
+  slug       String     @unique
+  status     PageStatus @default(DRAFT)
+  isHomepage Boolean    @default(false)
+  // Navigation
+  showInNav  Boolean    @default(false)
+  navLabel   String?
+  navOrder   Int        @default(0)
+  isBlogPage Boolean    @default(false)
+  featuredImageUrl String?
+  // Hero content
+  heroTagline      String?
+  heroHeading      String?  @db.Text
+  heroSubtitle     String?  @db.Text
+  heroDescription  String?  @db.Text
+  heroShowGrid     Boolean  @default(false)
+  heroShowDivider  Boolean  @default(false)
+  // SEO
+  metaTitle       String?
+  metaDescription String? @db.Text
+  ogImageUrl      String?
+  // Timestamps
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  deletedAt  DateTime?
+
+  blocks PageBlock[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([isHomepage])
+  @@index([showInNav])
+  @@index([isBlogPage])
+  @@index([deletedAt])
+}
+
+model PageBlock {
+  id        String   @id @default(cuid())
+  pageId    String
+  type      String
+  props     Json
+  sortOrder Int      @default(0)
+  mediaId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  page  Page   @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  media Media? @relation(fields: [mediaId], references: [id])
+
+  @@index([pageId])
+  @@index([sortOrder])
+  @@index([mediaId])
+}
+
+// ============================================================
+// CONTACT & NEWSLETTER
+// ============================================================
+
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String   @db.Text
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model NewsletterSubscriber {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+
+  @@index([email])
+}
