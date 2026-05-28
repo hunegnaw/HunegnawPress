@@ -11,6 +11,16 @@ const FONT_FAMILIES: Record<string, string> = {
   body: "var(--font-body-family, Inter), sans-serif",
 };
 
+/** Maps a font family key to its CSS variable prefix so that selecting
+ *  a typography preset also inherits weight, style, and size. */
+const FONT_VAR_PREFIX: Record<string, string> = {
+  heroTitle: "hero-title",
+  sectionHeading: "section-heading",
+  sectionTag: "section-tag",
+  subtitle: "subtitle",
+  body: "body",
+};
+
 const STYLE_MODIFIERS: Record<
   string,
   { fontWeight?: number | string; fontStyle?: string }
@@ -49,9 +59,21 @@ export function resolveBlockFont(value: string): CSSProperties | null {
   if (familyKey && FONT_FAMILIES[familyKey]) {
     result.fontFamily = FONT_FAMILIES[familyKey];
     hasOverride = true;
+
+    // When a typography preset is selected, also inherit its weight/style/size
+    const prefix = FONT_VAR_PREFIX[familyKey];
+    if (prefix) {
+      if (!styleKey) {
+        result.fontWeight = `var(--font-${prefix}-weight)` as unknown as number;
+        result.fontStyle = `var(--font-${prefix}-style)`;
+      }
+      if (!sizeKey) {
+        result.fontSize = `var(--font-${prefix}-size)`;
+      }
+    }
   }
 
-  // Style/weight override
+  // Style/weight override (takes precedence over preset defaults)
   if (styleKey && STYLE_MODIFIERS[styleKey]) {
     const mod = STYLE_MODIFIERS[styleKey];
     if (mod.fontWeight !== undefined) {
@@ -95,6 +117,19 @@ export function resolveBlockFontVars(
   if (familyKey && FONT_FAMILIES[familyKey]) {
     vars[`--font-${level}-family`] = FONT_FAMILIES[familyKey];
     hasOverride = true;
+
+    // When a typography preset is selected, also inherit its weight/style/size
+    // unless the block explicitly provides overrides via styleKey or sizeKey.
+    const prefix = FONT_VAR_PREFIX[familyKey];
+    if (prefix) {
+      if (!styleKey) {
+        vars[`--font-${level}-weight`] = `var(--font-${prefix}-weight)`;
+        vars[`--font-${level}-style`] = `var(--font-${prefix}-style)`;
+      }
+      if (!sizeKey) {
+        vars[`--font-${level}-size`] = `var(--font-${prefix}-size)`;
+      }
+    }
   }
 
   if (styleKey && STYLE_MODIFIERS[styleKey]) {
