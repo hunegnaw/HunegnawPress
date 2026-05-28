@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { OrganizationProvider } from "@/components/providers/organization-provider";
 import { FontLoader } from "@/components/providers/font-loader";
+import { getOrganization } from "@/lib/organization";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,10 +16,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "HunegnawPress",
-  description: "Content Management System",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const org = await getOrganization();
+  return {
+    title: org?.name || "My Website",
+    description: org?.legalName ? `${org.name} — ${org.legalName}` : org?.name || "My Website",
+  };
+}
 
 export default function RootLayout({
   children,

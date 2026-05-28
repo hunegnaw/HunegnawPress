@@ -44,7 +44,7 @@ export const DEFAULT_FOOTER: FooterConfig = {
     tagline: true, copyright: true, disclaimer: true, legalLinks: true,
   },
   logoUrl: null,
-  tagline: "Built with HunegnawPress",
+  tagline: "",
   newsletterHeading: "Stay Updated",
   newsletterDescription: "",
   copyrightStartYear: new Date().getFullYear().toString(),
