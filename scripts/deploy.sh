@@ -319,17 +319,11 @@ if [ -f "prisma/schema.prisma" ]; then
     echo "Running Prisma generate..."
     npx prisma generate
 
-    echo "Running database migrations..."
-    # Auto-recover from failed migrations
-    MIGRATE_STATUS=$(npx prisma migrate status 2>&1 || true)
-    if echo "$MIGRATE_STATUS" | grep -q "failed"; then
-        echo "Recovering failed migrations..."
-        echo "$MIGRATE_STATUS" | grep "failed" | sed -n 's/.*`\([^`]*\)`.*/\1/p' | while read migration; do
-            [ -n "$migration" ] && npx prisma migrate resolve --rolled-back "$migration" 2>/dev/null || true
-        done
-    fi
-    npx prisma migrate deploy
-    echo "Migrations applied"
+    echo "Pushing database schema..."
+    # Use db push while schema is actively evolving.
+    # Switch to prisma migrate deploy once schema stabilizes and migrations are created.
+    npx prisma db push --skip-generate
+    echo "Schema pushed"
 
     # Run seed (idempotent — uses upserts, safe to run every deploy)
     echo "Running database seed..."
