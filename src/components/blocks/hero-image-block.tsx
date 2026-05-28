@@ -4,6 +4,12 @@ interface HeroImageBlockProps {
   props: Record<string, unknown>;
 }
 
+interface HeroStat {
+  label: string;
+  value: string;
+  note: string;
+}
+
 export function HeroImageBlock({ props }: HeroImageBlockProps) {
   const heading = (props.heading as string) ?? "";
   const subheading = (props.subheading as string) ?? "";
@@ -17,6 +23,8 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
   const tagline = (props.tagline as string) ?? "";
   const showGrid = !!props.showGrid;
   const showDivider = !!props.showDivider;
+  const showStats = !!props.showStats;
+  const stats = (props.stats as HeroStat[]) ?? [];
 
   const headingFont = resolveBlockFontVars((props.headingFont as string) || "", "h1");
   const subheadingFont = resolveBlockFont((props.subheadingFont as string) || "");
@@ -38,6 +46,8 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
 
   const contentMaxWidth =
     textAlign === "center" ? "max-w-4xl" : "max-w-3xl";
+
+  const hasStats = showStats && stats.length > 0;
 
   return (
     <section
@@ -77,77 +87,156 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
         />
       )}
 
-      {/* Content */}
+      {/* Content wrapper — grid when stats present */}
       <div
-        className={`relative z-10 mx-auto ${contentMaxWidth} px-16 flex flex-col ${alignClass}`}
-        style={{
-          justifyContent: textAlign === "left" ? "flex-end" : "center",
-        }}
+        className="relative z-10 w-full h-full px-16"
+        style={hasStats ? {
+          display: "grid",
+          gridTemplateColumns: "1fr 360px",
+          alignItems: "end",
+          paddingBottom: "4rem",
+          paddingTop: "10rem",
+        } : undefined}
       >
-        {tagline && (
-          <div className="mb-4 flex items-center gap-3">
-            <span
-              className="inline-block h-px w-6"
+        {/* Main content */}
+        <div
+          className={hasStats ? "" : `mx-auto ${contentMaxWidth} flex flex-col ${alignClass}`}
+          style={hasStats ? {
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+          } : {
+            justifyContent: textAlign === "left" ? "flex-end" : "center",
+          }}
+        >
+          {tagline && (
+            <div className="mb-4 flex items-center gap-3">
+              <span
+                className="inline-block h-px w-6"
+                style={{
+                  backgroundColor:
+                    taglineColor || "var(--font-section-tag-color, #2563eb)",
+                }}
+              />
+              <span
+                className="uppercase tracking-[0.18em]"
+                style={{
+                  fontFamily:
+                    "var(--font-section-tag-family, Inter), sans-serif",
+                  fontSize: "var(--font-section-tag-size, 10px)",
+                  fontWeight:
+                    "var(--font-section-tag-weight, 400)" as unknown as number,
+                  color:
+                    taglineColor || "var(--font-section-tag-color, #2563eb)",
+                  ...(taglineFont ?? {}),
+                }}
+              >
+                {tagline}
+              </span>
+            </div>
+          )}
+          {heading && (
+            <h1
+              className="heading-dark leading-[1.05] tracking-tight text-white"
               style={{
-                backgroundColor:
-                  taglineColor || "var(--font-section-tag-color, #2563eb)",
+                ...(headingFont ?? {}),
+                ...(headingColor ? { color: headingColor } : {}),
               }}
+              dangerouslySetInnerHTML={{ __html: heading }}
             />
-            <span
-              className="uppercase tracking-[0.18em]"
+          )}
+          {subheading && (
+            <p
+              className="subtitle-font mt-6"
               style={{
-                fontFamily:
-                  "var(--font-section-tag-family, Inter), sans-serif",
-                fontSize: "var(--font-section-tag-size, 10px)",
-                fontWeight:
-                  "var(--font-section-tag-weight, 400)" as unknown as number,
-                color:
-                  taglineColor || "var(--font-section-tag-color, #2563eb)",
-                ...(taglineFont ?? {}),
+                fontFamily: "var(--font-subtitle-family, 'Inter'), sans-serif",
+                fontWeight: "var(--font-subtitle-weight, 300)" as unknown as number,
+                fontStyle: "var(--font-subtitle-style, normal)",
+                fontSize: "clamp(16px, 2vw, 22px)",
+                lineHeight: 1.6,
+                color: subheadingColor || "rgba(147,197,253,0.65)",
+                ...(subheadingFont ?? {}),
+              }}
+              dangerouslySetInnerHTML={{ __html: subheading }}
+            />
+          )}
+          {ctaText && ctaUrl && (
+            <a
+              href={ctaUrl}
+              className="mt-10 inline-block px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.12em] transition hover:brightness-110"
+              style={{
+                fontFamily: "var(--font-body-family, Inter), sans-serif",
+                backgroundColor: ctaButtonColor,
+                color: ctaButtonTextColor,
+                ...(ctaButtonFont ?? {}),
               }}
             >
-              {tagline}
-            </span>
-          </div>
-        )}
-        {heading && (
-          <h1
-            className="heading-dark leading-[1.05] tracking-tight text-white"
+              {ctaText}
+            </a>
+          )}
+        </div>
+
+        {/* Stats card — right side, hidden on mobile */}
+        {hasStats && (
+          <div
+            className="hero-stats-card"
             style={{
-              ...(headingFont ?? {}),
-              ...(headingColor ? { color: headingColor } : {}),
-            }}
-            dangerouslySetInnerHTML={{ __html: heading }}
-          />
-        )}
-        {subheading && (
-          <p
-            className="subtitle-font mt-6"
-            style={{
-              fontFamily: "var(--font-subtitle-family, 'Inter'), sans-serif",
-              fontWeight: "var(--font-subtitle-weight, 300)" as unknown as number,
-              fontStyle: "var(--font-subtitle-style, normal)",
-              fontSize: "clamp(16px, 2vw, 22px)",
-              lineHeight: 1.6,
-              color: subheadingColor || "rgba(147,197,253,0.65)",
-              ...(subheadingFont ?? {}),
-            }}
-            dangerouslySetInnerHTML={{ __html: subheading }}
-          />
-        )}
-        {ctaText && ctaUrl && (
-          <a
-            href={ctaUrl}
-            className="mt-10 inline-block px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.12em] transition hover:brightness-110"
-            style={{
-              fontFamily: "var(--font-body-family, Inter), sans-serif",
-              backgroundColor: ctaButtonColor,
-              color: ctaButtonTextColor,
-              ...(ctaButtonFont ?? {}),
+              alignSelf: "end",
+              background: "rgba(16,28,18,0.7)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              padding: "1.5rem",
             }}
           >
-            {ctaText}
-          </a>
+            {stats.map((stat, i) => (
+              <div
+                key={i}
+                style={{
+                  paddingBottom: i < stats.length - 1 ? "1rem" : undefined,
+                  marginBottom: i < stats.length - 1 ? "1rem" : undefined,
+                  borderBottom: i < stats.length - 1 ? "1px solid rgba(255,255,255,0.08)" : undefined,
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "0.64rem",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    color: "rgba(255,255,255,0.4)",
+                    fontFamily: "var(--font-body-family, Inter), sans-serif",
+                  }}
+                >
+                  {stat.label}
+                </div>
+                <div
+                  style={{
+                    fontSize: "1.65rem",
+                    fontWeight: 400,
+                    color: "rgba(255,255,255,0.9)",
+                    lineHeight: 1.2,
+                    marginTop: "0.25rem",
+                    fontFamily: "var(--font-hero-title-family, 'Inter'), sans-serif",
+                  }}
+                >
+                  {stat.value}
+                </div>
+                {stat.note && (
+                  <div
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "rgba(255,255,255,0.25)",
+                      marginTop: "0.15rem",
+                      fontFamily: "var(--font-body-family, Inter), sans-serif",
+                    }}
+                  >
+                    {stat.note}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
@@ -160,6 +249,20 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
               "linear-gradient(90deg, transparent 0%, #2563eb 50%, transparent 100%)",
           }}
         />
+      )}
+
+      {/* Responsive: hide stats card on mobile */}
+      {hasStats && (
+        <style>{`
+          @media (max-width: 960px) {
+            .hero-stats-card { display: none !important; }
+            .relative.z-10.w-full.h-full {
+              display: flex !important;
+              grid-template-columns: unset !important;
+              align-items: center !important;
+            }
+          }
+        `}</style>
       )}
     </section>
   );

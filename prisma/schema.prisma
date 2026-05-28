@@ -43,10 +43,6 @@ model User {
   phone         String?
   profileImageUrl String?
 
-  // 2FA
-  twoFactorEnabled  Boolean @default(false)
-  twoFactorVerified Boolean @default(false)
-
   // Timestamps
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -58,8 +54,6 @@ model User {
   // Relations
   accounts          Account[]
   sessions          Session[]
-  twoFactorSecret   TwoFactorSecret?
-  backupCodes       BackupCode[]
   auditLogs         AuditLog[]
   mediaUploads      Media[]
   blogPosts         BlogPost[]
@@ -118,30 +112,6 @@ model PasswordResetToken {
   @@index([email])
 }
 
-model TwoFactorSecret {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  secret    String
-  verified  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model BackupCode {
-  id        String    @id @default(cuid())
-  userId    String
-  codeHash  String
-  used      Boolean   @default(false)
-  usedAt    DateTime?
-  createdAt DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-}
-
 // ============================================================
 // ORGANIZATION (SITE SETTINGS)
 // ============================================================
@@ -176,9 +146,6 @@ model Organization {
 
   // Saved Colors (color picker palette)
   savedColors     Json?
-
-  // 2FA Policy
-  twoFactorPolicy String  @default("optional") // mandatory | optional | disabled
 
   // Timestamps
   createdAt DateTime @default(now())

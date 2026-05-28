@@ -47,7 +47,6 @@ async function main() {
       primaryColor: "#334155",
       secondaryColor: "#2563eb",
       accentColor: "#3b82f6",
-      twoFactorPolicy: "optional",
       disclaimer: "All content is for informational purposes only.",
     },
   });

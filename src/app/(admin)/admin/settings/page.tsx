@@ -21,7 +21,6 @@ import {
   Check,
   Palette,
   Mail,
-  Shield,
   FileText,
   Type,
   ImageIcon,
@@ -53,7 +52,6 @@ interface Organization {
   disclaimer: string | null
   privacyPolicy: string | null
   termsOfService: string | null
-  twoFactorPolicy: string | null
   typography: TypographySettings | null
 }
 
@@ -80,7 +78,6 @@ export default function AdminSettingsPage() {
   const [disclaimer, setDisclaimer] = useState("")
   const [privacyPolicy, setPrivacyPolicy] = useState("")
   const [termsOfService, setTermsOfService] = useState("")
-  const [twoFactorPolicy, setTwoFactorPolicy] = useState("")
   const [typography, setTypography] = useState<TypographySettings>(DEFAULT_TYPOGRAPHY)
   const [logoPickerOpen, setLogoPickerOpen] = useState(false)
   const [logoScrolledPickerOpen, setLogoScrolledPickerOpen] = useState(false)
@@ -108,7 +105,6 @@ export default function AdminSettingsPage() {
         setDisclaimer(data.disclaimer || "")
         setPrivacyPolicy(data.privacyPolicy || "")
         setTermsOfService(data.termsOfService || "")
-        setTwoFactorPolicy(data.twoFactorPolicy || "OPTIONAL")
         if (data.typography) {
           setTypography({ ...DEFAULT_TYPOGRAPHY, ...data.typography })
         }
@@ -147,7 +143,6 @@ export default function AdminSettingsPage() {
           disclaimer: disclaimer || null,
           privacyPolicy: privacyPolicy || null,
           termsOfService: termsOfService || null,
-          twoFactorPolicy: twoFactorPolicy || null,
           typography,
         }),
       })
@@ -566,34 +561,6 @@ export default function AdminSettingsPage() {
                 onChange={(e) => setTermsOfService(e.target.value)}
                 placeholder="https://example.com/terms"
               />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Security */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-base">Security</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-2 max-w-sm">
-              <Label>Two-Factor Authentication Policy</Label>
-              <Select value={twoFactorPolicy} onValueChange={(v) => setTwoFactorPolicy(v ?? "OPTIONAL")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select policy" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="MANDATORY">Mandatory - All users must set up TOTP two-factor authentication</SelectItem>
-                  <SelectItem value="OPTIONAL">Optional - Users can choose to enable TOTP two-factor authentication</SelectItem>
-                  <SelectItem value="DISABLED">Disabled - Two-factor authentication is turned off for all users</SelectItem>
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                Controls whether TOTP-based two-factor authentication is required, optional, or disabled for all users.
-              </p>
             </div>
           </CardContent>
         </Card>

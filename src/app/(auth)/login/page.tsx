@@ -1,88 +1,18 @@
 "use client";
 
-import { useState, useRef, useCallback, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Eye, EyeOff } from "lucide-react";
-
-function TwoFactorInput({
-  value,
-  onChange,
-  disabled,
-}: {
-  value: string;
-  onChange: (code: string) => void;
-  disabled?: boolean;
-}) {
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const digits = value.padEnd(6, "").split("").slice(0, 6);
-
-  const handleChange = useCallback(
-    (index: number, char: string) => {
-      if (!/^\d?$/.test(char)) return;
-      const newDigits = [...digits];
-      newDigits[index] = char;
-      const newCode = newDigits.join("");
-      onChange(newCode.replace(/\s/g, ""));
-      if (char && index < 5) {
-        inputRefs.current[index + 1]?.focus();
-      }
-    },
-    [digits, onChange]
-  );
-
-  const handleKeyDown = useCallback(
-    (index: number, e: React.KeyboardEvent) => {
-      if (e.key === "Backspace" && !digits[index] && index > 0) {
-        inputRefs.current[index - 1]?.focus();
-      }
-    },
-    [digits]
-  );
-
-  const handlePaste = useCallback(
-    (e: React.ClipboardEvent) => {
-      e.preventDefault();
-      const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
-      if (pasted) {
-        onChange(pasted);
-        const focusIndex = Math.min(pasted.length, 5);
-        inputRefs.current[focusIndex]?.focus();
-      }
-    },
-    [onChange]
-  );
-
-  return (
-    <div className="flex gap-2" onPaste={handlePaste}>
-      {digits.map((digit, i) => (
-        <input
-          key={i}
-          ref={(el) => { inputRefs.current[i] = el; }}
-          type="text"
-          inputMode="numeric"
-          maxLength={1}
-          value={digit || ""}
-          onChange={(e) => handleChange(i, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(i, e)}
-          disabled={disabled}
-          autoFocus={i === 0}
-          className="w-10 h-11 text-center text-base font-medium border border-slate-300 rounded-md bg-slate-50 text-slate-900 focus:outline-none focus:border-blue-600 disabled:opacity-50"
-        />
-      ))}
-    </div>
-  );
-}
 
 function StepIndicator({ step }: { step: number }) {
   return (
     <div className="flex items-center gap-1.5 mb-5">
       <div className={`w-1.5 h-1.5 rounded-full ${step >= 1 ? "bg-blue-600" : "bg-slate-300"}`} />
       <div className={`w-1.5 h-1.5 rounded-full ${step >= 2 ? "bg-blue-600" : "bg-slate-300"}`} />
-      <div className={`w-1.5 h-1.5 rounded-full ${step >= 3 ? "bg-blue-600" : "bg-slate-300"}`} />
       <span className="text-[11px] text-slate-500 ml-1">
-        {step === 1 ? "Sign in" : step === 2 ? "Password" : "2FA verification"}
+        {step === 1 ? "Sign in" : "Password"}
       </span>
     </div>
   );
@@ -101,10 +31,7 @@ function LoginContent() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [backupCode, setBackupCode] = useState("");
-  const [step, setStep] = useState<"email" | "password" | "2fa">("email");
-  const [useBackupCode, setUseBackupCode] = useState(false);
+  const [step, setStep] = useState<"email" | "password">("email");
   const [error, setError] = useState("");
   const [fieldError, setFieldError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -141,11 +68,7 @@ function LoginContent() {
       });
 
       if (result?.error) {
-        if (result.error.includes("2FA_REQUIRED") || result.error.includes("two-factor") || result.error.includes("2FA")) {
-          setStep("2fa");
-        } else {
-          setError(result.error === "CredentialsSignin" ? "Invalid email or password" : result.error);
-        }
+        setError(result.error === "CredentialsSignin" ? "Invalid email or password" : result.error);
       } else {
         const session = await getSession();
         const role = session?.user?.role;
@@ -163,88 +86,7 @@ function LoginContent() {
     }
   }
 
-  async function handleTwoFactor(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    const code = useBackupCode ? backupCode.trim() : twoFactorCode;
-    if (!code) {
-      setError("Please enter a code");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        twoFactorCode: code,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError(result.error === "CredentialsSignin" ? "Invalid verification code" : result.error);
-      } else {
-        router.push("/admin");
-        router.refresh();
-      }
-    } catch {
-      setError("An unexpected error occurred");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   function renderRightPanel() {
-    if (step === "2fa") {
-      return (
-        <>
-          <StepIndicator step={3} />
-          <h2 className="text-lg font-medium text-slate-900 mb-1">Two-factor authentication</h2>
-          <p className="text-[13px] text-slate-500 mb-7">
-            {useBackupCode
-              ? "Enter one of your backup codes to sign in."
-              : "Enter the 6-digit code from your authenticator app."}
-          </p>
-
-          <form onSubmit={handleTwoFactor} className="space-y-4">
-            {error && (
-              <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{error}</div>
-            )}
-
-            <div>
-              <label className="text-xs text-slate-500 mb-1.5 block">Email</label>
-              <input type="email" value={email} readOnly className="w-full px-3 py-2.5 text-[13px] border border-slate-300 rounded-md bg-slate-50 text-slate-900 focus:outline-none" />
-            </div>
-
-            {useBackupCode ? (
-              <div>
-                <label className="text-xs text-slate-500 mb-1.5 block">Backup code</label>
-                <input value={backupCode} onChange={(e) => setBackupCode(e.target.value)} placeholder="xxxx-xxxx" autoFocus disabled={loading} className="w-full px-3 py-2.5 text-[13px] border border-slate-300 rounded-md bg-slate-50 text-slate-900 font-mono text-center focus:outline-none focus:border-blue-600 disabled:opacity-50" />
-              </div>
-            ) : (
-              <div>
-                <label className="text-xs text-slate-500 mb-1.5 block">Verification code</label>
-                <TwoFactorInput value={twoFactorCode} onChange={setTwoFactorCode} disabled={loading} />
-              </div>
-            )}
-
-            <button type="submit" disabled={loading} className="w-full py-2.5 bg-slate-800 text-white text-[13px] font-medium rounded-md hover:bg-slate-700 disabled:opacity-50 mt-2 flex items-center justify-center gap-2">
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Log In
-            </button>
-
-            <div className="flex justify-end mt-3.5">
-              <button type="button" onClick={() => { setUseBackupCode(!useBackupCode); setError(""); }} className="text-xs text-slate-500 hover:text-blue-600 cursor-pointer">
-                {useBackupCode ? "Use authenticator app" : "Use a backup code"}
-              </button>
-            </div>
-          </form>
-        </>
-      );
-    }
-
     if (step === "password") {
       return (
         <>

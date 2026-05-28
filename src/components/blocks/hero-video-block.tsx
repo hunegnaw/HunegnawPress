@@ -8,8 +8,9 @@ interface HeroVideoBlockProps {
 }
 
 interface HeroStat {
-  value: string;
   label: string;
+  value: string;
+  note: string;
 }
 
 export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
@@ -25,7 +26,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
   const videoUrl = (props.videoUrl as string) ?? "";
   const posterImageUrl = (props.posterImageUrl as string) ?? "";
   const overlayOpacity = (props.overlayOpacity as number) ?? 0.5;
-  const showStats = props.showStats !== false;
+  const showStats = !!props.showStats;
   const stats = (props.stats as HeroStat[]) ?? [];
 
   const taglineFont = resolveBlockFont((props.taglineFont as string) || "");
@@ -48,6 +49,8 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
       videoRef.current.play().catch(() => {});
     }
   }, []);
+
+  const hasStats = showStats && stats.length > 0;
 
   return (
     <section className="relative flex min-h-screen items-end overflow-hidden" style={backgroundColor ? { backgroundColor } : undefined}>
@@ -92,9 +95,17 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
         style={{ opacity: overlayOpacity }}
       />
 
-      {/* Content — left-aligned */}
-      <div className="relative z-10 w-full px-16 pb-16 pt-40">
-        <div className="max-w-[900px]">
+      {/* Content wrapper — grid when stats present */}
+      <div
+        className="relative z-10 w-full px-16 pb-16 pt-40"
+        style={hasStats ? {
+          display: "grid",
+          gridTemplateColumns: "1fr 360px",
+          alignItems: "end",
+          gap: "2rem",
+        } : undefined}
+      >
+        <div className={hasStats ? "" : "max-w-[900px]"}>
           {/* Tagline */}
           {tagline && (
             <div
@@ -190,36 +201,65 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
           )}
         </div>
 
-        {/* Stats — bottom right (props-driven) */}
-        {showStats && stats.length > 0 && (
+        {/* Stats card — right side, hidden on mobile */}
+        {hasStats && (
           <div
-            className="absolute bottom-16 right-6 hidden flex-col gap-6 text-right md:right-12 md:flex lg:right-16"
-            style={{ animation: "fadeUp 0.8s ease 0.7s both" }}
+            className="hero-stats-card"
+            style={{
+              alignSelf: "end",
+              background: "rgba(16,28,18,0.7)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              padding: "1.5rem",
+              animation: "fadeUp 0.8s ease 0.7s both",
+            }}
           >
             {stats.map((stat, i) => (
-              <div key={i}>
+              <div
+                key={i}
+                style={{
+                  paddingBottom: i < stats.length - 1 ? "1rem" : undefined,
+                  marginBottom: i < stats.length - 1 ? "1rem" : undefined,
+                  borderBottom: i < stats.length - 1 ? "1px solid rgba(255,255,255,0.08)" : undefined,
+                }}
+              >
                 <div
-                  className="leading-none"
                   style={{
-                    fontFamily: "var(--font-hero-title-family, 'Inter'), sans-serif",
-                    fontSize: "36px",
-                    fontWeight: 300,
-                    color: "#93c5fd",
-                  }}
-                >
-                  {stat.value}
-                </div>
-                <div
-                  className="mt-1 uppercase tracking-[0.12em]"
-                  style={{
+                    fontSize: "0.64rem",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.12em",
+                    color: "rgba(255,255,255,0.4)",
                     fontFamily: "var(--font-body-family, Inter), sans-serif",
-                    fontSize: "10px",
-                    fontWeight: 400,
-                    color: "rgba(255,255,255,0.35)",
                   }}
                 >
                   {stat.label}
                 </div>
+                <div
+                  style={{
+                    fontSize: "1.65rem",
+                    fontWeight: 400,
+                    color: "rgba(255,255,255,0.9)",
+                    lineHeight: 1.2,
+                    marginTop: "0.25rem",
+                    fontFamily: "var(--font-hero-title-family, 'Inter'), sans-serif",
+                  }}
+                >
+                  {stat.value}
+                </div>
+                {stat.note && (
+                  <div
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "rgba(255,255,255,0.25)",
+                      marginTop: "0.15rem",
+                      fontFamily: "var(--font-body-family, Inter), sans-serif",
+                    }}
+                  >
+                    {stat.note}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -234,6 +274,15 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
             "linear-gradient(90deg, transparent, rgba(37,99,235,0.4), transparent)",
         }}
       />
+
+      {/* Responsive: hide stats card on mobile */}
+      {hasStats && (
+        <style>{`
+          @media (max-width: 960px) {
+            .hero-stats-card { display: none !important; }
+          }
+        `}</style>
+      )}
     </section>
   );
 }

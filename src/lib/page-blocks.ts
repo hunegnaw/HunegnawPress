@@ -15,6 +15,7 @@ export const BLOCK_TYPES = {
       heading: "", headingFont: "", subheading: "", subheadingFont: "",
       ctaText: "", ctaUrl: "", ctaButtonFont: "", ctaText2: "", ctaUrl2: "",
       cta2ButtonFont: "", overlayOpacity: 0.5, showStats: false,
+      stats: [] as { label: string; value: string; note: string }[],
       scrollHintText: "Scroll",
     },
   },
@@ -28,7 +29,8 @@ export const BLOCK_TYPES = {
       overlayOpacity: 0.4, backgroundColor: "#1e293b", textColor: "#ffffff",
       height: "70vh", textAlign: "center" as "left" | "center" | "right",
       tagline: "", taglineFont: "", taglineColor: "", showGrid: false,
-      showDivider: false,
+      showDivider: false, showStats: false,
+      stats: [] as { label: string; value: string; note: string }[],
     },
   },
   text_section: {

@@ -623,7 +623,72 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <ColorField label="Secondary CTA Button Color" field="cta2ButtonColor" {...fp} />
           <ColorField label="Secondary CTA Text Color" field="cta2ButtonTextColor" {...fp} />
           <FontField label="Secondary CTA Button Font" field="cta2ButtonFont" hint={fontHint(t.body)} {...fp} />
-          <CheckboxField label="Show Dynamic Stats" field="showStats" {...fp} />
+          <CheckboxField label="Show Stats Card" field="showStats" {...fp} />
+          {!!props.showStats && (() => {
+            const heroStats = (props.stats as { label: string; value: string; note: string }[]) || [];
+            return (
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Stats
+                </label>
+                {heroStats.map((stat, i) => (
+                  <div key={i} className="flex items-center gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={stat.label}
+                      onChange={(e) => {
+                        const updated = [...heroStats];
+                        updated[i] = { ...updated[i], label: e.target.value };
+                        updateProp("stats", updated);
+                      }}
+                      placeholder="Label"
+                      className="flex-1 px-2 py-1 text-xs border rounded"
+                    />
+                    <input
+                      type="text"
+                      value={stat.value}
+                      onChange={(e) => {
+                        const updated = [...heroStats];
+                        updated[i] = { ...updated[i], value: e.target.value };
+                        updateProp("stats", updated);
+                      }}
+                      placeholder="Value"
+                      className="flex-1 px-2 py-1 text-xs border rounded"
+                    />
+                    <input
+                      type="text"
+                      value={stat.note}
+                      onChange={(e) => {
+                        const updated = [...heroStats];
+                        updated[i] = { ...updated[i], note: e.target.value };
+                        updateProp("stats", updated);
+                      }}
+                      placeholder="Note"
+                      className="flex-1 px-2 py-1 text-xs border rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateProp("stats", heroStats.filter((_, j) => j !== i));
+                      }}
+                      className="p-1 text-red-500 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateProp("stats", [...heroStats, { label: "", value: "", note: "" }])
+                  }
+                  className="flex items-center gap-1 text-xs text-[#2563eb] hover:underline"
+                >
+                  <Plus size={12} /> Add Stat
+                </button>
+              </div>
+            );
+          })()}
           <InputField label="Scroll Hint Text" field="scrollHintText" {...fp} />
           <RangeField label="Overlay Opacity" field="overlayOpacity" {...fp} />
           <ColorField label="Background Color" field="backgroundColor" {...fp} />
@@ -669,6 +734,72 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <ColorField label="Text Color" field="textColor" {...fp} />
           <CheckboxField label="Show Grid Pattern" field="showGrid" {...fp} />
           <CheckboxField label="Show Bottom Divider" field="showDivider" {...fp} />
+          <CheckboxField label="Show Stats Card" field="showStats" {...fp} />
+          {!!props.showStats && (() => {
+            const heroStats = (props.stats as { label: string; value: string; note: string }[]) || [];
+            return (
+              <div>
+                <label className="block text-xs font-medium text-gray-700 mb-2">
+                  Stats
+                </label>
+                {heroStats.map((stat, i) => (
+                  <div key={i} className="flex items-center gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={stat.label}
+                      onChange={(e) => {
+                        const updated = [...heroStats];
+                        updated[i] = { ...updated[i], label: e.target.value };
+                        updateProp("stats", updated);
+                      }}
+                      placeholder="Label"
+                      className="flex-1 px-2 py-1 text-xs border rounded"
+                    />
+                    <input
+                      type="text"
+                      value={stat.value}
+                      onChange={(e) => {
+                        const updated = [...heroStats];
+                        updated[i] = { ...updated[i], value: e.target.value };
+                        updateProp("stats", updated);
+                      }}
+                      placeholder="Value"
+                      className="flex-1 px-2 py-1 text-xs border rounded"
+                    />
+                    <input
+                      type="text"
+                      value={stat.note}
+                      onChange={(e) => {
+                        const updated = [...heroStats];
+                        updated[i] = { ...updated[i], note: e.target.value };
+                        updateProp("stats", updated);
+                      }}
+                      placeholder="Note"
+                      className="flex-1 px-2 py-1 text-xs border rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateProp("stats", heroStats.filter((_, j) => j !== i));
+                      }}
+                      className="p-1 text-red-500 hover:bg-red-50 rounded"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    updateProp("stats", [...heroStats, { label: "", value: "", note: "" }])
+                  }
+                  className="flex items-center gap-1 text-xs text-[#2563eb] hover:underline"
+                >
+                  <Plus size={12} /> Add Stat
+                </button>
+              </div>
+            );
+          })()}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">
               Height
