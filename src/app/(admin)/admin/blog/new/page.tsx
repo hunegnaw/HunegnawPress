@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
 import { MediaPicker } from "@/components/admin/media-picker"
 import { RichTextEditor } from "@/components/admin/rich-text-editor"
 import { AlertCircle, ArrowLeft, Loader2, ImageIcon, X } from "lucide-react"
@@ -84,7 +83,7 @@ export default function AdminNewBlogPostPage() {
   }, [])
 
   useEffect(() => {
-    fetchCategoriesAndTags()
+    Promise.resolve().then(() => fetchCategoriesAndTags())
   }, [fetchCategoriesAndTags])
 
   function handleTitleChange(value: string) {

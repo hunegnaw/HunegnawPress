@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
 import { MediaPicker } from "@/components/admin/media-picker"
 import { RichTextEditor } from "@/components/admin/rich-text-editor"
 import { AlertCircle, ArrowLeft, CheckCircle, Loader2, ImageIcon, X } from "lucide-react"
@@ -134,7 +133,7 @@ export default function AdminEditBlogPostPage() {
   }, [postId])
 
   useEffect(() => {
-    fetchCategoriesAndTags()
+    Promise.resolve().then(() => fetchCategoriesAndTags())
   }, [fetchCategoriesAndTags])
 
   useEffect(() => {

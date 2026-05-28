@@ -33,7 +33,6 @@ import {
   GripVertical,
   Eye,
   FolderOpen,
-  Tags,
 } from "lucide-react"
 import {
   DndContext,
@@ -261,7 +260,7 @@ export default function AdminBlogPage() {
   }, [fetchPosts])
 
   useEffect(() => {
-    fetchCategories()
+    Promise.resolve().then(() => fetchCategories())
   }, [fetchCategories])
 
   function handleSearch(e: React.FormEvent) {
