@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
-import { getAllBrandHexValues } from "@/lib/brand-palette";
+import { getAllBrandHexValues, mergeBrandPalette, type BrandColorCategory } from "@/lib/brand-palette";
 
 export async function POST() {
   try {
@@ -13,7 +13,8 @@ export async function POST() {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    const brandColors = getAllBrandHexValues();
+    const palette = mergeBrandPalette(organization.brandPalette as BrandColorCategory[] | null);
+    const brandColors = getAllBrandHexValues(palette);
 
     await prisma.organization.update({
       where: { id: organization.id },

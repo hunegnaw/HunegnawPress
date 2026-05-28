@@ -147,6 +147,9 @@ model Organization {
   // Saved Colors (color picker palette)
   savedColors     Json?
 
+  // Brand Palette (editable brand color system)
+  brandPalette    Json?
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

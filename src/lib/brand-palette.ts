@@ -11,7 +11,7 @@ export interface BrandColorCategory {
   colors: BrandColor[];
 }
 
-export const BRAND_PALETTE: BrandColorCategory[] = [
+export const DEFAULT_BRAND_PALETTE: BrandColorCategory[] = [
   {
     id: "primary",
     label: "Primary Colors",
@@ -69,10 +69,10 @@ export const BRAND_PALETTE: BrandColorCategory[] = [
   },
 ];
 
-export function getAllBrandHexValues(): string[] {
+export function getAllBrandHexValues(palette: BrandColorCategory[] = DEFAULT_BRAND_PALETTE): string[] {
   const seen = new Set<string>();
   const result: string[] = [];
-  for (const cat of BRAND_PALETTE) {
+  for (const cat of palette) {
     for (const color of cat.colors) {
       const hex = color.hex.toLowerCase();
       if (!seen.has(hex)) { seen.add(hex); result.push(hex); }
@@ -81,12 +81,16 @@ export function getAllBrandHexValues(): string[] {
   return result;
 }
 
-export function findBrandColor(hex: string): BrandColor | undefined {
+export function findBrandColor(hex: string, palette: BrandColorCategory[] = DEFAULT_BRAND_PALETTE): BrandColor | undefined {
   const normalized = hex.toLowerCase();
-  for (const cat of BRAND_PALETTE) {
+  for (const cat of palette) {
     for (const color of cat.colors) {
       if (color.hex.toLowerCase() === normalized) return color;
     }
   }
   return undefined;
+}
+
+export function mergeBrandPalette(saved?: BrandColorCategory[] | null): BrandColorCategory[] {
+  return saved && Array.isArray(saved) && saved.length > 0 ? saved : DEFAULT_BRAND_PALETTE;
 }

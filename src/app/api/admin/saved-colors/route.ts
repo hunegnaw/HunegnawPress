@@ -13,7 +13,8 @@ export async function GET() {
     }
 
     const colors = (organization.savedColors as string[]) || [];
-    return NextResponse.json({ colors });
+    const brandPalette = organization.brandPalette ?? null;
+    return NextResponse.json({ colors, brandPalette });
   } catch (error) {
     console.error("Error fetching saved colors:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

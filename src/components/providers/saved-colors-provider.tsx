@@ -2,7 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import {
-  BRAND_PALETTE,
+  DEFAULT_BRAND_PALETTE,
+  mergeBrandPalette,
   findBrandColor as findBrandColorFn,
   type BrandColorCategory,
   type BrandColor,
@@ -22,7 +23,7 @@ const SavedColorsContext = createContext<SavedColorsContextValue>({
   addColor: () => {},
   removeColor: () => {},
   refetch: () => {},
-  brandPalette: BRAND_PALETTE,
+  brandPalette: DEFAULT_BRAND_PALETTE,
   findBrandColor: findBrandColorFn,
 });
 
@@ -32,6 +33,7 @@ export function useSavedColors() {
 
 export function SavedColorsProvider({ children }: { children: React.ReactNode }) {
   const [colors, setColors] = useState<string[]>([]);
+  const [brandPalette, setBrandPalette] = useState<BrandColorCategory[]>(DEFAULT_BRAND_PALETTE);
 
   const refetch = useCallback(() => {
     fetch("/api/admin/saved-colors")
@@ -40,6 +42,7 @@ export function SavedColorsProvider({ children }: { children: React.ReactNode })
         if (Array.isArray(data.colors)) {
           setColors(data.colors);
         }
+        setBrandPalette(mergeBrandPalette(data.brandPalette));
       })
       .catch(console.error);
   }, []);
@@ -81,6 +84,11 @@ export function SavedColorsProvider({ children }: { children: React.ReactNode })
     [persist]
   );
 
+  const findBrandColor = useCallback(
+    (hex: string) => findBrandColorFn(hex, brandPalette),
+    [brandPalette]
+  );
+
   return (
     <SavedColorsContext.Provider
       value={{
@@ -88,8 +96,8 @@ export function SavedColorsProvider({ children }: { children: React.ReactNode })
         addColor,
         removeColor,
         refetch,
-        brandPalette: BRAND_PALETTE,
-        findBrandColor: findBrandColorFn,
+        brandPalette,
+        findBrandColor,
       }}
     >
       {children}

@@ -14,7 +14,7 @@ import {
   TooltipContent,
   TooltipProvider,
 } from "@/components/ui/tooltip";
-import { BRAND_PALETTE } from "@/lib/brand-palette";
+import { useSavedColors } from "@/components/providers/saved-colors-provider";
 import { Search } from "lucide-react";
 
 interface BrandColorPickerModalProps {
@@ -38,6 +38,7 @@ export function BrandColorPickerModal({
   onSelect,
   currentColor,
 }: BrandColorPickerModalProps) {
+  const { brandPalette } = useSavedColors();
   const [search, setSearch] = useState("");
   const [customColor, setCustomColor] = useState("#000000");
   const nativeRef = useRef<HTMLInputElement>(null);
@@ -68,7 +69,7 @@ export function BrandColorPickerModal({
 
         <TooltipProvider delay={200}>
           <div className="flex-1 overflow-y-auto space-y-5 pr-1 -mr-1">
-            {BRAND_PALETTE.map((category) => {
+            {brandPalette.map((category) => {
               const filtered = category.colors.filter(
                 (c) =>
                   !query ||

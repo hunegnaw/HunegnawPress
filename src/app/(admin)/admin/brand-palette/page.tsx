@@ -1,12 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useCallback, useEffect, useState } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { BRAND_PALETTE, type BrandColor } from "@/lib/brand-palette";
-import { Palette, Copy, Check, Loader2, RefreshCw } from "lucide-react";
+import {
+  DEFAULT_BRAND_PALETTE,
+  type BrandColor,
+  type BrandColorCategory,
+} from "@/lib/brand-palette";
+import {
+  Palette,
+  Plus,
+  Trash2,
+  Save,
+  RotateCcw,
+  Check,
+  Loader2,
+  RefreshCw,
+  GripVertical,
+} from "lucide-react";
 import { useSavedColors } from "@/components/providers/saved-colors-provider";
+
+function hexToRgb(hex: string): string {
+  const c = hex.replace("#", "");
+  if (c.length !== 6) return "";
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  if (isNaN(r) || isNaN(g) || isNaN(b)) return "";
+  return `${r}, ${g}, ${b}`;
+}
 
 function isLightColor(hex: string): boolean {
   const c = hex.replace("#", "");
@@ -16,88 +41,193 @@ function isLightColor(hex: string): boolean {
   return (r * 299 + g * 587 + b * 114) / 1000 > 180;
 }
 
-function ColorSwatch({ color }: { color: BrandColor }) {
-  const [copied, setCopied] = useState(false);
-  const light = isLightColor(color.hex);
-
-  async function handleCopy() {
-    await navigator.clipboard.writeText(color.hex);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      className="group text-left rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow"
-    >
-      <div
-        className="h-24 flex items-end justify-between p-3 relative"
-        style={{ backgroundColor: color.hex }}
-      >
-        <span
-          className="font-medium text-sm"
-          style={{ color: light ? "#1e293b" : "#ffffff" }}
-        >
-          {color.name}
-        </span>
-        <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-          {copied ? (
-            <Check size={16} style={{ color: light ? "#1e293b" : "#ffffff" }} />
-          ) : (
-            <Copy size={14} style={{ color: light ? "#1e293b" : "#ffffff" }} />
-          )}
-        </span>
-      </div>
-      <div className="px-3 py-2 bg-white">
-        <p className="text-xs font-mono text-gray-700">{color.hex}</p>
-        <p className="text-[10px] text-gray-400">RGB {color.rgb}</p>
-        <p className="text-[11px] text-gray-500 mt-0.5">{color.usage}</p>
-      </div>
-    </button>
-  );
+function isValidHex(hex: string): boolean {
+  return /^#[0-9a-fA-F]{6}$/.test(hex);
 }
 
-function ScaleStrip({ colors }: { colors: BrandColor[] }) {
+function ColorRow({
+  color,
+  onChange,
+  onDelete,
+}: {
+  color: BrandColor;
+  onChange: (updated: BrandColor) => void;
+  onDelete: () => void;
+}) {
+  const light = isValidHex(color.hex) ? isLightColor(color.hex) : true;
+
   return (
-    <div className="flex rounded-lg overflow-hidden border border-gray-200">
-      {colors.map((color) => {
-        const light = isLightColor(color.hex);
-        return (
-          <div
-            key={color.hex}
-            className="flex-1 h-12 flex items-center justify-center group cursor-pointer relative"
-            style={{ backgroundColor: color.hex }}
-            onClick={async () => {
-              await navigator.clipboard.writeText(color.hex);
-            }}
-            title={`${color.name} — ${color.hex} — Click to copy`}
+    <div className="flex items-center gap-2 group">
+      <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
+      <div
+        className="w-10 h-10 rounded-md border border-gray-200 shrink-0 relative"
+        style={{ backgroundColor: isValidHex(color.hex) ? color.hex : "#ffffff" }}
+      >
+        <input
+          type="color"
+          value={isValidHex(color.hex) ? color.hex : "#000000"}
+          onChange={(e) =>
+            onChange({ ...color, hex: e.target.value, rgb: hexToRgb(e.target.value) })
+          }
+          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+        />
+        {isValidHex(color.hex) && (
+          <span
+            className="absolute inset-0 flex items-center justify-center text-[7px] font-mono pointer-events-none"
+            style={{ color: light ? "#1e293b" : "#ffffff" }}
           >
-            <span
-              className="text-[9px] font-mono opacity-80 group-hover:opacity-100 transition-opacity"
-              style={{ color: light ? "#1e293b" : "#ffffff" }}
-            >
-              {color.hex.replace("#", "")}
-            </span>
-          </div>
-        );
-      })}
+            {color.hex}
+          </span>
+        )}
+      </div>
+      <Input
+        value={color.name}
+        onChange={(e) => onChange({ ...color, name: e.target.value })}
+        placeholder="Name"
+        className="w-32"
+      />
+      <Input
+        value={color.hex}
+        onChange={(e) => {
+          const hex = e.target.value;
+          onChange({ ...color, hex, rgb: isValidHex(hex) ? hexToRgb(hex) : color.rgb });
+        }}
+        placeholder="#000000"
+        className="w-28 font-mono text-xs"
+      />
+      <span className="text-[11px] text-muted-foreground font-mono w-28 shrink-0">
+        {color.rgb || "—"}
+      </span>
+      <Input
+        value={color.usage}
+        onChange={(e) => onChange({ ...color, usage: e.target.value })}
+        placeholder="Usage description"
+        className="flex-1 text-xs"
+      />
+      <Button
+        type="button"
+        variant="ghost"
+        size="sm"
+        onClick={onDelete}
+        className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 hover:bg-red-50 shrink-0"
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+      </Button>
     </div>
   );
 }
 
 export default function BrandPalettePage() {
+  const [palette, setPalette] = useState<BrandColorCategory[]>(DEFAULT_BRAND_PALETTE);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [syncing, setSyncing] = useState(false);
-  const [synced, setSynced] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const { refetch } = useSavedColors();
 
+  const loadPalette = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/settings");
+      if (!res.ok) throw new Error("Failed to load settings");
+      const data = await res.json();
+      if (data.brandPalette && Array.isArray(data.brandPalette) && data.brandPalette.length > 0) {
+        setPalette(data.brandPalette);
+      } else {
+        setPalette(DEFAULT_BRAND_PALETTE);
+      }
+      setDirty(false);
+    } catch {
+      setMessage({ type: "error", text: "Failed to load palette" });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch
+    loadPalette();
+  }, [loadPalette]);
+
+  function updatePalette(updated: BrandColorCategory[]) {
+    setPalette(updated);
+    setDirty(true);
+  }
+
+  function updateCategory(catIndex: number, updates: Partial<BrandColorCategory>) {
+    const updated = palette.map((cat, i) => (i === catIndex ? { ...cat, ...updates } : cat));
+    updatePalette(updated);
+  }
+
+  function deleteCategory(catIndex: number) {
+    if (!confirm("Delete this entire category and all its colors?")) return;
+    updatePalette(palette.filter((_, i) => i !== catIndex));
+  }
+
+  function addCategory() {
+    const id = `custom-${Date.now()}`;
+    updatePalette([
+      ...palette,
+      { id, label: "New Category", colors: [] },
+    ]);
+  }
+
+  function updateColor(catIndex: number, colorIndex: number, updated: BrandColor) {
+    const newColors = [...palette[catIndex].colors];
+    newColors[colorIndex] = updated;
+    updateCategory(catIndex, { colors: newColors });
+  }
+
+  function deleteColor(catIndex: number, colorIndex: number) {
+    const newColors = palette[catIndex].colors.filter((_, i) => i !== colorIndex);
+    updateCategory(catIndex, { colors: newColors });
+  }
+
+  function addColor(catIndex: number) {
+    const newColors = [
+      ...palette[catIndex].colors,
+      { name: "New Color", hex: "#000000", rgb: "0, 0, 0", usage: "" },
+    ];
+    updateCategory(catIndex, { colors: newColors });
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brandPalette: palette }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to save");
+      }
+      setDirty(false);
+      refetch();
+      setMessage({ type: "success", text: "Brand palette saved." });
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err) {
+      setMessage({ type: "error", text: err instanceof Error ? err.message : "Save failed" });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function handleReset() {
+    if (!confirm("Reset palette to built-in defaults? Unsaved changes will be lost.")) return;
+    updatePalette(DEFAULT_BRAND_PALETTE);
+  }
+
   async function handleSync() {
-    if (!confirm("This will replace all currently saved colors with the full brand palette. Continue?")) return;
+    if (!confirm("This will replace all saved colors with the current brand palette hex values. Continue?")) return;
+    if (dirty) {
+      if (!confirm("You have unsaved palette changes. Save them first before syncing?")) return;
+      await handleSave();
+    }
     setSyncing(true);
-    setError(null);
-    setSynced(false);
+    setMessage(null);
     try {
       const res = await fetch("/api/admin/saved-colors/seed", { method: "POST" });
       if (!res.ok) {
@@ -105,13 +235,21 @@ export default function BrandPalettePage() {
         throw new Error(data.error || "Failed to sync colors");
       }
       refetch();
-      setSynced(true);
-      setTimeout(() => setSynced(false), 3000);
+      setMessage({ type: "success", text: "All brand colors synced to saved colors palette." });
+      setTimeout(() => setMessage(null), 3000);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred");
+      setMessage({ type: "error", text: err instanceof Error ? err.message : "Sync failed" });
     } finally {
       setSyncing(false);
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center">
+        <Loader2 className="animate-spin h-6 w-6 text-muted-foreground" />
+      </div>
+    );
   }
 
   return (
@@ -120,58 +258,113 @@ export default function BrandPalettePage() {
         <div>
           <h1 className="text-2xl font-bold">Brand Palette</h1>
           <p className="text-muted-foreground mt-1">
-            Color system reference. Click any swatch to copy the hex value.
+            Edit your brand color system. Changes are saved to the database.
           </p>
         </div>
-        <Button
-          onClick={handleSync}
-          disabled={syncing}
-          variant={synced ? "outline" : "default"}
-        >
-          {syncing ? (
-            <Loader2 className="animate-spin h-4 w-4" />
-          ) : synced ? (
-            <Check className="h-4 w-4" />
-          ) : (
-            <RefreshCw className="h-4 w-4" />
-          )}
-          {synced ? "Synced" : "Sync to Saved Colors"}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleReset} disabled={saving}>
+            <RotateCcw className="h-4 w-4" />
+            Reset to Defaults
+          </Button>
+          <Button variant="outline" onClick={handleSync} disabled={syncing || saving}>
+            {syncing ? <Loader2 className="animate-spin h-4 w-4" /> : <RefreshCw className="h-4 w-4" />}
+            Sync to Saved Colors
+          </Button>
+          <Button onClick={handleSave} disabled={saving || !dirty}>
+            {saving ? <Loader2 className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4" />}
+            Save Palette
+          </Button>
+        </div>
       </div>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
+      {message && (
+        <Alert variant={message.type === "error" ? "destructive" : "default"}>
+          {message.type === "success" && <Check className="h-4 w-4" />}
+          <AlertDescription>{message.text}</AlertDescription>
         </Alert>
       )}
 
-      {synced && (
+      {dirty && (
         <Alert>
-          <Check className="h-4 w-4" />
-          <AlertDescription>All brand colors synced to saved colors palette.</AlertDescription>
+          <AlertDescription className="text-amber-700">
+            You have unsaved changes. Click &quot;Save Palette&quot; to persist them.
+          </AlertDescription>
         </Alert>
       )}
 
-      {BRAND_PALETTE.map((category) => (
+      {palette.map((category, catIndex) => (
         <Card key={category.id}>
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <Palette className="h-5 w-5 text-muted-foreground" />
-              <CardTitle className="text-base">{category.label}</CardTitle>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Palette className="h-5 w-5 text-muted-foreground" />
+                <Input
+                  value={category.label}
+                  onChange={(e) => updateCategory(catIndex, { label: e.target.value })}
+                  className="text-base font-semibold w-64"
+                />
+              </div>
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addColor(catIndex)}
+                  className="text-blue-600 hover:text-blue-700"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Add Color
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => deleteCategory(catIndex)}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {category.colors.length >= 5 && (
-              <ScaleStrip colors={category.colors} />
+          <CardContent>
+            {category.colors.length === 0 ? (
+              <p className="text-sm text-muted-foreground italic">
+                No colors in this category. Click &quot;Add Color&quot; to add one.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-6">
+                  <span className="w-10">Color</span>
+                  <span className="w-32">Name</span>
+                  <span className="w-28">Hex</span>
+                  <span className="w-28">RGB</span>
+                  <span className="flex-1">Usage</span>
+                  <span className="w-8" />
+                </div>
+                {category.colors.map((color, colorIndex) => (
+                  <ColorRow
+                    key={colorIndex}
+                    color={color}
+                    onChange={(updated) => updateColor(catIndex, colorIndex, updated)}
+                    onDelete={() => deleteColor(catIndex, colorIndex)}
+                  />
+                ))}
+              </div>
             )}
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-              {category.colors.map((color) => (
-                <ColorSwatch key={color.hex} color={color} />
-              ))}
-            </div>
           </CardContent>
         </Card>
       ))}
+
+      <Button
+        type="button"
+        variant="outline"
+        onClick={addCategory}
+        className="w-full border-dashed"
+      >
+        <Plus className="h-4 w-4" />
+        Add Category
+      </Button>
     </div>
   );
 }
