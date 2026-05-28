@@ -26,7 +26,7 @@ import {
   ImageIcon,
 } from "lucide-react"
 import { MediaPicker } from "@/components/admin/media-picker"
-import { GOOGLE_FONTS } from "@/lib/google-fonts"
+import { GOOGLE_FONTS, getGoogleFontUrl } from "@/lib/google-fonts"
 import {
   TYPOGRAPHY_CATEGORIES,
   DEFAULT_TYPOGRAPHY,
@@ -116,6 +116,28 @@ export default function AdminSettingsPage() {
     }
     fetchSettings()
   }, [])
+
+  // Load Google Fonts for live preview whenever typography state changes
+  useEffect(() => {
+    const families = Array.from(
+      new Set(
+        Object.values(typography).map((s) => s.fontFamily)
+      )
+    );
+    const url = getGoogleFontUrl(families);
+    if (!url) return;
+    const linkId = "settings-google-fonts";
+    let link = document.getElementById(linkId) as HTMLLinkElement | null;
+    if (link) {
+      link.href = url;
+    } else {
+      link = document.createElement("link");
+      link.id = linkId;
+      link.rel = "stylesheet";
+      link.href = url;
+      document.head.appendChild(link);
+    }
+  }, [typography]);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
@@ -457,7 +479,7 @@ export default function AdminSettingsPage() {
                 <div
                   className="mt-2 p-3 rounded-md border bg-muted/30"
                   style={{
-                    fontFamily: typography[key].fontFamily,
+                    fontFamily: `'${typography[key].fontFamily}', sans-serif`,
                     fontWeight: parseInt(typography[key].fontWeight),
                     fontStyle: typography[key].fontStyle,
                     color: typography[key].color,
