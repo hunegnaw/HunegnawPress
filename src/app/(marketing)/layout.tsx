@@ -3,6 +3,7 @@ import { MarketingFooter } from "@/components/marketing/footer";
 import { prisma } from "@/lib/prisma";
 import { getOrganization } from "@/lib/organization";
 import { mergeTypography, type TypographySettings } from "@/lib/typography";
+import { getGoogleFontUrl } from "@/lib/google-fonts";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +16,7 @@ function buildTypographyCss(typography: TypographySettings): string {
     { key: "subtitle", prefix: "subtitle" },
     { key: "body", prefix: "body" },
     { key: "adminBody", prefix: "admin-body" },
+    { key: "portalBody", prefix: "portal-body" },
     { key: "blogCardTitle", prefix: "blog-card-title" },
     { key: "blogCardExcerpt", prefix: "blog-card-excerpt" },
     { key: "h1", prefix: "h1" },
@@ -56,6 +58,14 @@ export default async function MarketingLayout({
   );
   const typoCss = buildTypographyCss(typography);
 
+  // Collect unique font families from all typography settings and load via Google Fonts
+  const fontFamilies = Array.from(
+    new Set(
+      Object.values(typography).map((s) => s.fontFamily)
+    )
+  );
+  const googleFontUrl = getGoogleFontUrl(fontFamilies);
+
   const navLinks = navPages.map((p) => ({
     href: p.isHomepage ? "/" : `/${p.slug}`,
     label: p.navLabel || p.title,
@@ -63,6 +73,9 @@ export default async function MarketingLayout({
 
   return (
     <>
+      {googleFontUrl && (
+        <link rel="stylesheet" href={googleFontUrl} />
+      )}
       <style dangerouslySetInnerHTML={{ __html: typoCss }} />
       <MarketingHeader navLinks={navLinks} />
       <div className="min-h-screen flex flex-col marketing-typography">
