@@ -17,6 +17,8 @@ interface OrgConfig {
   address?: string | null;
   typography: TypographySettings;
   footer: FooterConfig;
+  /** True once the API has returned real organization data. */
+  _loaded: boolean;
 }
 
 const defaultOrg: OrgConfig = {
@@ -26,6 +28,7 @@ const defaultOrg: OrgConfig = {
   accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#3b82f6",
   typography: mergeTypography(),
   footer: mergeFooter(),
+  _loaded: false,
 };
 
 const OrganizationContext = createContext<OrgConfig>(defaultOrg);
@@ -54,6 +57,7 @@ export function OrganizationProvider({ children }: { children: React.ReactNode }
           address: data.address,
           typography: mergeTypography(data.typography),
           footer: mergeFooter(data.footer),
+          _loaded: true,
         });
       })
       .catch(console.error);

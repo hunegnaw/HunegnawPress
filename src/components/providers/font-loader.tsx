@@ -39,7 +39,7 @@ function getCSSVariables(typography: TypographySettings): string {
 
 export function FontLoader() {
   const org = useOrganization();
-  const typography = org.typography;
+  const { typography, _loaded } = org;
 
   const families = useMemo(() => {
     const set = new Set<string>();
@@ -53,7 +53,7 @@ export function FontLoader() {
   const cssVars = useMemo(() => getCSSVariables(typography), [typography]);
 
   useEffect(() => {
-    if (!fontUrl) return;
+    if (!_loaded || !fontUrl) return;
     const linkId = "typography-google-fonts";
     let link = document.getElementById(linkId) as HTMLLinkElement | null;
     if (link) {
@@ -65,9 +65,13 @@ export function FontLoader() {
       link.href = fontUrl;
       document.head.appendChild(link);
     }
-  }, [fontUrl]);
+  }, [fontUrl, _loaded]);
 
   useEffect(() => {
+    // Don't inject default CSS variables before the API returns — the
+    // marketing layout already has correct server-rendered variables and
+    // overwriting them with defaults causes the wrong font to render.
+    if (!_loaded) return;
     const styleId = "typography-css-vars";
     let style = document.getElementById(styleId) as HTMLStyleElement | null;
     if (style) {
@@ -78,7 +82,7 @@ export function FontLoader() {
       style.textContent = cssVars;
       document.head.appendChild(style);
     }
-  }, [cssVars]);
+  }, [cssVars, _loaded]);
 
   return null;
 }
