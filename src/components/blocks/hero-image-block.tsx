@@ -46,6 +46,9 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
   const ctaButtonColor = (props.ctaButtonColor as string) || "#2563eb";
   const ctaButtonTextColor = (props.ctaButtonTextColor as string) || "#ffffff";
   const taglineColor = (props.taglineColor as string) || "";
+  const taglineAccentColor = (props.taglineAccentColor as string) || "";
+  const ctaBorderColor = (props.ctaBorderColor as string) || "";
+  const dividerColor = (props.dividerColor as string) || "";
 
   const alignClass =
     textAlign === "left"
@@ -125,7 +128,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
                 className="inline-block h-px w-6"
                 style={{
                   backgroundColor:
-                    taglineColor || "var(--font-section-tag-color, #2563eb)",
+                    taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)",
                 }}
               />
               <span
@@ -162,7 +165,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
                 fontFamily: "var(--font-subtitle-family, 'Inter'), sans-serif",
                 fontWeight: "var(--font-subtitle-weight, 300)" as unknown as number,
                 fontStyle: "var(--font-subtitle-style, normal)",
-                fontSize: "clamp(16px, 2vw, 22px)",
+                fontSize: "var(--font-subtitle-size, clamp(16px, 2vw, 22px))",
                 lineHeight: 1.6,
                 color: subheadingColor || "rgba(147,197,253,0.65)",
                 ...(subheadingFont ?? {}),
@@ -178,6 +181,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
                 fontFamily: "var(--font-body-family, Inter), sans-serif",
                 backgroundColor: ctaButtonColor,
                 color: ctaButtonTextColor,
+                ...(ctaBorderColor ? { border: `1px solid ${ctaBorderColor}` } : {}),
                 ...(ctaButtonFont ?? {}),
               }}
             >
@@ -259,7 +263,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
           className="absolute bottom-0 left-0 right-0 h-px"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, #2563eb 50%, transparent 100%)",
+              `linear-gradient(90deg, transparent 0%, ${dividerColor || "#2563eb"} 50%, transparent 100%)`,
           }}
         />
       )}

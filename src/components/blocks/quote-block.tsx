@@ -11,6 +11,7 @@ export function QuoteBlock({ props }: QuoteBlockProps) {
   const quoteColor = (props.quoteColor as string) || "#0f172ae6";
   const attributionColor = (props.attributionColor as string) || "#0f172a";
   const roleColor = (props.roleColor as string) || "#64748b";
+  const accentColor = (props.accentColor as string) || "";
   const backgroundColor = (props.backgroundColor as string) || undefined;
   const maxWidth = (props.maxWidth as string) ?? "sm";
   const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
@@ -43,7 +44,7 @@ export function QuoteBlock({ props }: QuoteBlockProps) {
             <footer className="mt-6 flex items-center gap-3">
               <span
                 className="inline-block h-px w-6"
-                style={{ backgroundColor: "#2563eb" }}
+                style={{ backgroundColor: accentColor || "#2563eb" }}
               />
               <div>
                 {attribution && (

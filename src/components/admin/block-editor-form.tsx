@@ -597,6 +597,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="Tagline" field="tagline" placeholder="e.g. Private Markets · Alternative Investments" {...fp} />
           <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
           <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+          <ColorField label="Tagline Accent Color" field="taglineAccentColor" {...fp} />
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Heading</label>
             <textarea
@@ -617,11 +618,13 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="Primary CTA URL" field="ctaUrl" {...fp} />
           <ColorField label="Primary CTA Button Color" field="ctaButtonColor" {...fp} />
           <ColorField label="Primary CTA Text Color" field="ctaButtonTextColor" {...fp} />
+          <ColorField label="Primary CTA Border Color" field="ctaBorderColor" {...fp} />
           <FontField label="Primary CTA Button Font" field="ctaButtonFont" hint={fontHint(t.body)} {...fp} />
           <InputField label="Secondary CTA Text" field="ctaText2" {...fp} />
           <InputField label="Secondary CTA URL" field="ctaUrl2" {...fp} />
           <ColorField label="Secondary CTA Button Color" field="cta2ButtonColor" {...fp} />
           <ColorField label="Secondary CTA Text Color" field="cta2ButtonTextColor" {...fp} />
+          <ColorField label="Secondary CTA Border Color" field="cta2BorderColor" {...fp} />
           <FontField label="Secondary CTA Button Font" field="cta2ButtonFont" hint={fontHint(t.body)} {...fp} />
           <CheckboxField label="Show Stats Card" field="showStats" {...fp} />
           {!!props.showStats && (() => {
@@ -700,6 +703,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="Scroll Hint Text" field="scrollHintText" {...fp} />
           <RangeField label="Overlay Opacity" field="overlayOpacity" {...fp} />
           <ColorField label="Background Color" field="backgroundColor" {...fp} />
+          <ColorField label="Divider Color" field="dividerColor" {...fp} />
           <MediaPicker
             open={mediaPicker.open}
             onClose={() => setMediaPicker({ ...mediaPicker, open: false })}
@@ -726,6 +730,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="Tagline" field="tagline" placeholder="e.g. Private Markets · Alternative Investments" {...fp} />
           <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
           <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+          <ColorField label="Tagline Accent Color" field="taglineAccentColor" {...fp} />
           <InputField label="Heading" field="heading" {...fp} />
           <FontField label="Heading Font" field="headingFont" hint={fontHint(t.h1)} {...fp} />
           <ColorField label="Heading Color" field="headingColor" {...fp} />
@@ -736,12 +741,14 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="CTA URL" field="ctaUrl" {...fp} />
           <ColorField label="CTA Button Color" field="ctaButtonColor" {...fp} />
           <ColorField label="CTA Button Text Color" field="ctaButtonTextColor" {...fp} />
+          <ColorField label="CTA Border Color" field="ctaBorderColor" {...fp} />
           <FontField label="CTA Button Font" field="ctaButtonFont" hint={fontHint(t.body)} {...fp} />
           <RangeField label="Overlay Opacity" field="overlayOpacity" {...fp} />
           <ColorField label="Background Color" field="backgroundColor" {...fp} />
           <ColorField label="Text Color" field="textColor" {...fp} />
           <CheckboxField label="Show Grid Pattern" field="showGrid" {...fp} />
           <CheckboxField label="Show Bottom Divider" field="showDivider" {...fp} />
+          <ColorField label="Divider Color" field="dividerColor" {...fp} />
           <CheckboxField label="Show Stats Card" field="showStats" {...fp} />
           {!!props.showStats && (() => {
             const heroStats = (props.stats as { label: string; value: string; note: string }[]) || [];
@@ -1109,6 +1116,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
             />
           </div>
           <ColorField label="Quote Color" field="quoteColor" {...fp} />
+          <ColorField label="Accent Line Color" field="accentColor" {...fp} />
           <FontField label="Quote Font" field="quoteFont" hint={fontHint(t.sectionHeading)} {...fp} />
           <InputField label="Attribution" field="attribution" {...fp} />
           <ColorField label="Attribution Color" field="attributionColor" {...fp} />
@@ -1214,6 +1222,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
         <div className="space-y-4">
           <InputField label="Tagline" field="tagline" {...fp} />
           <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+          <ColorField label="Tagline Accent Color" field="taglineAccentColor" {...fp} />
           <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
           <div>
             <InputField label="Heading" field="heading" {...fp} />
@@ -1298,6 +1307,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
         <div className="space-y-4">
           <InputField label="Tagline" field="tagline" {...fp} />
           <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+          <ColorField label="Tagline Accent Color" field="taglineAccentColor" {...fp} />
           <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-1">Quote</label>
@@ -1389,6 +1399,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="Tagline" field="tagline" {...fp} />
           <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
           <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+          <ColorField label="Tagline Accent Color" field="taglineAccentColor" {...fp} />
           <div>
             <InputField label="Heading" field="heading" {...fp} />
             <p className="mt-1 text-xs text-gray-400">Supports HTML. Use &lt;em&gt; for italic gold text, &lt;br&gt; for line breaks.</p>
@@ -1489,6 +1500,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="Tagline" field="tagline" {...fp} />
           <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
           <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+          <ColorField label="Tagline Accent Color" field="taglineAccentColor" {...fp} />
           <div>
             <InputField label="Heading" field="heading" {...fp} />
             <p className="mt-1 text-xs text-gray-400">Supports HTML. Use &lt;em&gt; for italic gold text, &lt;br&gt; for line breaks.</p>

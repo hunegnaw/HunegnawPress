@@ -24,6 +24,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
   const stepDescColor = (props.stepDescColor as string) || "#64748b";
   const sidebarBgColor = (props.sidebarBgColor as string) || "#1e293b";
   const taglineColor = (props.taglineColor as string) || "";
+  const taglineAccentColor = (props.taglineAccentColor as string) || "";
   const sidebarTaglineColor = (props.sidebarTaglineColor as string) || "";
   const sidebarStatColor = (props.sidebarStatColor as string) || "#93c5fd";
   const sidebarLabelColor = (props.sidebarLabelColor as string) || "";
@@ -48,7 +49,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
             <div className="mb-4 flex items-center gap-3">
               <span
                 className="inline-block h-px w-6"
-                style={{ backgroundColor: taglineColor || "var(--font-section-tag-color, #2563eb)" }}
+                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
               />
               <span
                 className="uppercase tracking-[0.18em]"

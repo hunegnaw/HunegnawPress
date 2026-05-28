@@ -14,6 +14,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
     (props.pillars as { name: string; description: string }[]) ?? [];
   const backgroundColor = (props.backgroundColor as string) || "#1e293b";
   const taglineColor = (props.taglineColor as string) || "";
+  const taglineAccentColor = (props.taglineAccentColor as string) || "";
   const quoteColor = (props.quoteColor as string) || "#ffffffe6";
   const attributionColor = (props.attributionColor as string) || "#ffffff4d";
   const pillarNameColor = (props.pillarNameColor as string) || "#93c5fd";
@@ -43,7 +44,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
               <div className="mb-6 flex items-center gap-3">
                 <span
                   className="inline-block h-px w-6"
-                  style={{ backgroundColor: "var(--font-section-tag-color, #2563eb)" }}
+                  style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
                 />
                 <span
                   className="uppercase tracking-[0.18em]"

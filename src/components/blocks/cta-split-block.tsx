@@ -25,6 +25,7 @@ export function CtaSplitBlock({ props }: CtaSplitBlockProps) {
   const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
 
   const taglineColor = (props.taglineColor as string) || "";
+  const taglineAccentColor = (props.taglineAccentColor as string) || "";
   const cta2ButtonColor = (props.cta2ButtonColor as string) || "";
   const cta2ButtonTextColor = (props.cta2ButtonTextColor as string) || "";
 
@@ -44,7 +45,7 @@ export function CtaSplitBlock({ props }: CtaSplitBlockProps) {
               <div className="mb-4 flex items-center gap-3">
                 <span
                   className="inline-block h-px w-6"
-                  style={{ backgroundColor: taglineColor || "var(--font-section-tag-color, #2563eb)" }}
+                  style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
                 />
                 <span
                   className="uppercase tracking-[0.18em]"

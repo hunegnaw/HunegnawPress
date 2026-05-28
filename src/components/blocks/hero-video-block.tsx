@@ -50,8 +50,11 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
   const subheadingColor = (props.subheadingColor as string) || "";
   const ctaButtonColor = (props.ctaButtonColor as string) || "#2563eb";
   const ctaButtonTextColor = (props.ctaButtonTextColor as string) || "#ffffff";
-  const cta2ButtonColor = (props.cta2ButtonColor as string) || "";
   const cta2ButtonTextColor = (props.cta2ButtonTextColor as string) || "";
+  const taglineAccentColor = (props.taglineAccentColor as string) || "";
+  const ctaBorderColor = (props.ctaBorderColor as string) || "";
+  const cta2BorderColor = (props.cta2BorderColor as string) || "";
+  const dividerColor = (props.dividerColor as string) || "";
   const backgroundColor = (props.backgroundColor as string) || "";
 
   useEffect(() => {
@@ -124,7 +127,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
             >
               <span
                 className="inline-block h-px w-8"
-                style={{ backgroundColor: "var(--font-section-tag-color, #2563eb)" }}
+                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
               />
               <span
                 className="uppercase tracking-[0.2em]"
@@ -162,7 +165,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                 fontFamily: "var(--font-subtitle-family, 'Inter'), sans-serif",
                 fontWeight: "var(--font-subtitle-weight, 300)" as unknown as number,
                 fontStyle: "var(--font-subtitle-style, normal)",
-                fontSize: "clamp(16px, 2vw, 22px)",
+                fontSize: "var(--font-subtitle-size, clamp(16px, 2vw, 22px))",
                 lineHeight: 1.6,
                 color: subheadingColor || "rgba(147,197,253,0.65)",
                 animation: "fadeUp 0.8s ease 0.4s both",
@@ -186,6 +189,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                     fontFamily: "var(--font-body-family, Inter), sans-serif",
                     backgroundColor: ctaButtonColor,
                     color: ctaButtonTextColor,
+                    ...(ctaBorderColor ? { border: `1px solid ${ctaBorderColor}` } : {}),
                     ...(ctaButtonFont ?? {}),
                   }}
                 >
@@ -198,9 +202,8 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                   className="inline-block px-8 py-3.5 text-[11px] font-normal uppercase tracking-[0.12em] transition hover:border-[#93c5fd] hover:text-[#93c5fd]"
                   style={{
                     fontFamily: "var(--font-body-family, Inter), sans-serif",
-                    border: `0.5px solid ${cta2ButtonColor || "rgba(147,197,253,0.4)"}`,
+                    border: `0.5px solid ${cta2BorderColor || "rgba(147,197,253,0.4)"}`,
                     color: cta2ButtonTextColor || "rgba(147,197,253,0.8)",
-                    ...(cta2ButtonColor ? { backgroundColor: cta2ButtonColor } : {}),
                     ...(cta2ButtonFont ?? {}),
                   }}
                 >
@@ -284,7 +287,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
         className="absolute bottom-0 left-0 right-0 h-px"
         style={{
           background:
-            "linear-gradient(90deg, transparent, rgba(37,99,235,0.4), transparent)",
+            `linear-gradient(90deg, transparent, ${dividerColor || "rgba(37,99,235,0.4)"}, transparent)`,
         }}
       />
 

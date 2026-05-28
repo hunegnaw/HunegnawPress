@@ -15,6 +15,7 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
     (props.cards as { name: string; description: string }[]) ?? [];
   const backgroundColor = (props.backgroundColor as string) || "#f8fafc";
   const taglineColor = (props.taglineColor as string) || "";
+  const taglineAccentColor = (props.taglineAccentColor as string) || "";
   const headingColor = (props.headingColor as string) || "";
   const subtitleColor = (props.subtitleColor as string) || "";
   const maxWidth = (props.maxWidth as string) ?? "xl";
@@ -48,7 +49,7 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
             <div className="mb-4 flex items-center gap-3">
               <span
                 className="inline-block h-px w-6"
-                style={{ backgroundColor: "var(--font-section-tag-color, #2563eb)" }}
+                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
               />
               <span
                 className="uppercase tracking-[0.18em]"
