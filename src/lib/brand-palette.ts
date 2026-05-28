@@ -3,6 +3,7 @@ export interface BrandColor {
   hex: string;
   rgb: string;
   usage: string;
+  opacity?: number; // 0–1, defaults to 1
 }
 
 export interface BrandColorCategory {

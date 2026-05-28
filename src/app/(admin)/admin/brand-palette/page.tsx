@@ -45,6 +45,17 @@ function isValidHex(hex: string): boolean {
   return /^#[0-9a-fA-F]{6}$/.test(hex);
 }
 
+function hexToRgba(hex: string, opacity: number): string {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+const CHECKERBOARD_BG =
+  "repeating-conic-gradient(#e2e2e2 0% 25%, transparent 0% 50%) 0 0 / 12px 12px";
+
 function ColorRow({
   color,
   onChange,
@@ -55,14 +66,23 @@ function ColorRow({
   onDelete: () => void;
 }) {
   const light = isValidHex(color.hex) ? isLightColor(color.hex) : true;
+  const opacity = color.opacity ?? 1;
 
   return (
     <div className="flex items-center gap-2 group">
       <GripVertical className="h-4 w-4 text-muted-foreground/40 shrink-0" />
       <div
-        className="w-10 h-10 rounded-md border border-gray-200 shrink-0 relative"
-        style={{ backgroundColor: isValidHex(color.hex) ? color.hex : "#ffffff" }}
+        className="w-10 h-10 rounded-md border border-gray-200 shrink-0 relative overflow-hidden"
+        style={{ background: CHECKERBOARD_BG }}
       >
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundColor: isValidHex(color.hex)
+              ? hexToRgba(color.hex, opacity)
+              : "transparent",
+          }}
+        />
         <input
           type="color"
           value={isValidHex(color.hex) ? color.hex : "#000000"}
@@ -74,7 +94,7 @@ function ColorRow({
         {isValidHex(color.hex) && (
           <span
             className="absolute inset-0 flex items-center justify-center text-[7px] font-mono pointer-events-none"
-            style={{ color: light ? "#1e293b" : "#ffffff" }}
+            style={{ color: light && opacity > 0.5 ? "#1e293b" : "#ffffff" }}
           >
             {color.hex}
           </span>
@@ -95,9 +115,32 @@ function ColorRow({
         placeholder="#000000"
         className="w-28 font-mono text-xs"
       />
-      <span className="text-[11px] text-muted-foreground font-mono w-28 shrink-0">
+      <span className="text-[11px] text-muted-foreground font-mono w-24 shrink-0">
         {color.rgb || "—"}
       </span>
+      <div className="flex items-center gap-1.5 w-28 shrink-0">
+        <input
+          type="range"
+          min={0}
+          max={100}
+          value={Math.round(opacity * 100)}
+          onChange={(e) =>
+            onChange({ ...color, opacity: Number(e.target.value) / 100 })
+          }
+          className="flex-1 h-1.5 accent-blue-600"
+        />
+        <Input
+          value={Math.round(opacity * 100)}
+          onChange={(e) => {
+            const v = parseInt(e.target.value, 10);
+            if (!isNaN(v)) {
+              onChange({ ...color, opacity: Math.min(100, Math.max(0, v)) / 100 });
+            }
+          }}
+          className="w-14 text-xs text-center font-mono px-1"
+        />
+        <span className="text-[10px] text-muted-foreground">%</span>
+      </div>
       <Input
         value={color.usage}
         onChange={(e) => onChange({ ...color, usage: e.target.value })}
@@ -186,7 +229,7 @@ export default function BrandPalettePage() {
   function addColor(catIndex: number) {
     const newColors = [
       ...palette[catIndex].colors,
-      { name: "New Color", hex: "#000000", rgb: "0, 0, 0", usage: "" },
+      { name: "New Color", hex: "#000000", rgb: "0, 0, 0", usage: "", opacity: 1 },
     ];
     updateCategory(catIndex, { colors: newColors });
   }
@@ -338,7 +381,8 @@ export default function BrandPalettePage() {
                   <span className="w-10">Color</span>
                   <span className="w-32">Name</span>
                   <span className="w-28">Hex</span>
-                  <span className="w-28">RGB</span>
+                  <span className="w-24">RGB</span>
+                  <span className="w-28">Opacity</span>
                   <span className="flex-1">Usage</span>
                   <span className="w-8" />
                 </div>

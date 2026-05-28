@@ -32,6 +32,17 @@ function isLightColor(hex: string): boolean {
   return (r * 299 + g * 587 + b * 114) / 1000 > 180;
 }
 
+function hexToRgba(hex: string, opacity: number): string {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
+const CHECKERBOARD_BG =
+  "repeating-conic-gradient(#e2e2e2 0% 25%, transparent 0% 50%) 0 0 / 10px 10px";
+
 export function BrandColorPickerModal({
   open,
   onClose,
@@ -88,6 +99,8 @@ export function BrandColorPickerModal({
                       const isSelected =
                         color.hex.toLowerCase() === normalizedCurrent;
                       const light = isLightColor(color.hex);
+                      const opacity = color.opacity ?? 1;
+                      const hasOpacity = opacity < 1;
 
                       return (
                         <Tooltip key={`${category.id}-${color.hex}`}>
@@ -99,18 +112,24 @@ export function BrandColorPickerModal({
                                   onSelect(color.hex.toLowerCase());
                                   onClose();
                                 }}
-                                className={`w-14 h-14 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 flex flex-col items-center justify-end pb-1 ${
+                                className={`w-14 h-14 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 flex flex-col items-center justify-end pb-1 overflow-hidden relative ${
                                   isSelected
                                     ? "ring-2 ring-blue-600 ring-offset-2 border-blue-600"
-                                    : light
+                                    : light && opacity > 0.5
                                       ? "border-gray-300"
                                       : "border-transparent"
                                 }`}
-                                style={{ backgroundColor: color.hex }}
+                                style={hasOpacity ? { background: CHECKERBOARD_BG } : { backgroundColor: color.hex }}
                               >
+                                {hasOpacity && (
+                                  <div
+                                    className="absolute inset-0"
+                                    style={{ backgroundColor: hexToRgba(color.hex, opacity) }}
+                                  />
+                                )}
                                 <span
-                                  className="text-[8px] font-mono leading-none"
-                                  style={{ color: light ? "#1e293b" : "#ffffff" }}
+                                  className="text-[8px] font-mono leading-none relative z-10"
+                                  style={{ color: light && opacity > 0.5 ? "#1e293b" : "#ffffff" }}
                                 >
                                   {color.hex}
                                 </span>
@@ -121,6 +140,9 @@ export function BrandColorPickerModal({
                             <div className="text-center">
                               <p className="font-medium">{color.name}</p>
                               <p className="opacity-70 text-[11px]">{color.usage}</p>
+                              {hasOpacity && (
+                                <p className="opacity-70 text-[11px]">Opacity: {Math.round(opacity * 100)}%</p>
+                              )}
                             </div>
                           </TooltipContent>
                         </Tooltip>
