@@ -118,7 +118,7 @@ function ColorRow({
       <span className="text-[11px] text-muted-foreground font-mono w-24 shrink-0">
         {color.rgb || "—"}
       </span>
-      <div className="flex items-center gap-1.5 w-28 shrink-0">
+      <div className="flex items-center gap-1.5 w-40 shrink-0">
         <input
           type="range"
           min={0}
@@ -382,7 +382,7 @@ export default function BrandPalettePage() {
                   <span className="w-32">Name</span>
                   <span className="w-28">Hex</span>
                   <span className="w-24">RGB</span>
-                  <span className="w-28">Opacity</span>
+                  <span className="w-40">Opacity</span>
                   <span className="flex-1">Usage</span>
                   <span className="w-8" />
                 </div>
