@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { mergeTypography, type TypographySettings } from "@/lib/typography";
 import { mergeFooter, type FooterConfig } from "@/lib/footer";
+import { mergeNav, type NavConfig } from "@/lib/nav";
 
 interface OrgConfig {
   name: string;
@@ -16,6 +17,7 @@ interface OrgConfig {
   phone?: string | null;
   address?: string | null;
   typography: TypographySettings;
+  nav: NavConfig;
   footer: FooterConfig;
   /** True once the API has returned real organization data. */
   _loaded: boolean;
@@ -27,6 +29,7 @@ const defaultOrg: OrgConfig = {
   secondaryColor: process.env.NEXT_PUBLIC_SECONDARY_COLOR || "#2563eb",
   accentColor: process.env.NEXT_PUBLIC_ACCENT_COLOR || "#3b82f6",
   typography: mergeTypography(),
+  nav: mergeNav(),
   footer: mergeFooter(),
   _loaded: false,
 };
@@ -56,6 +59,7 @@ export function OrganizationProvider({ children }: { children: React.ReactNode }
           phone: data.phone,
           address: data.address,
           typography: mergeTypography(data.typography),
+          nav: mergeNav(data.nav),
           footer: mergeFooter(data.footer),
           _loaded: true,
         });

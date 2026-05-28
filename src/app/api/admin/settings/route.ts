@@ -59,6 +59,7 @@ export async function PATCH(request: Request) {
       privacyPolicy,
       termsOfService,
       typography,
+      nav,
       footer,
       brandPalette,
     } = body;
@@ -82,6 +83,7 @@ export async function PATCH(request: Request) {
         ...(privacyPolicy !== undefined && { privacyPolicy }),
         ...(termsOfService !== undefined && { termsOfService }),
         ...(typography !== undefined && { typography }),
+        ...(nav !== undefined && { nav }),
         ...(footer !== undefined && { footer }),
         ...(brandPalette !== undefined && { brandPalette }),
       },

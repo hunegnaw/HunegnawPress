@@ -32,6 +32,8 @@ export interface FooterConfig {
   backgroundColor: string;
   textColor: string;
   accentColor: string;
+  linkColor: string;
+  linkHoverColor: string;
   links: FooterLink[];
   navColumns: FooterNavColumn[];
 }
@@ -50,6 +52,8 @@ export const DEFAULT_FOOTER: FooterConfig = {
   backgroundColor: "#1e293b",
   textColor: "#ffffff",
   accentColor: "#2563eb",
+  linkColor: "rgba(255,255,255,0.55)",
+  linkHoverColor: "#ffffff",
   links: [
     { label: "Privacy Policy", url: "/privacy-policy" },
     { label: "Terms of Use", url: "/terms-of-use" },

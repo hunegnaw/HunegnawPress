@@ -141,6 +141,9 @@ model Organization {
   // Typography
   typography      Json?
 
+  // Navigation
+  nav             Json?
+
   // Footer
   footer          Json?
 

@@ -114,13 +114,19 @@ export function MarketingFooter() {
                     {link.url ? (
                       <Link
                         href={link.url}
-                        className="transition-opacity hover:opacity-100"
-                        style={{ fontSize: "12px", fontWeight: 300, opacity: 0.55 }}
+                        className="transition-colors"
+                        style={{ fontSize: "12px", fontWeight: 300, color: footer.linkColor }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = footer.linkHoverColor;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = footer.linkColor;
+                        }}
                       >
                         {link.label}
                       </Link>
                     ) : (
-                      <span style={{ fontSize: "12px", fontWeight: 300, opacity: 0.55 }}>
+                      <span style={{ fontSize: "12px", fontWeight: 300, color: footer.linkColor }}>
                         {link.label}
                       </span>
                     )}
@@ -163,8 +169,8 @@ export function MarketingFooter() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 px-3 py-2 text-xs focus:outline-none transition-colors"
                   style={{
-                    backgroundColor: "rgba(255,255,255,0.05)",
-                    border: "0.5px solid rgba(255,255,255,0.15)",
+                    backgroundColor: `${footer.textColor}0d`,
+                    border: `0.5px solid ${footer.textColor}26`,
                     color: footer.textColor,
                     fontFamily: "inherit",
                   }}
@@ -216,8 +222,14 @@ export function MarketingFooter() {
                       <Link
                         key={i}
                         href={link.url}
-                        className="transition-opacity hover:opacity-70"
-                        style={{ fontSize: "11px", fontWeight: 300, opacity: 0.4 }}
+                        className="transition-colors"
+                        style={{ fontSize: "11px", fontWeight: 300, color: footer.linkColor }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = footer.linkHoverColor;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = footer.linkColor;
+                        }}
                       >
                         {link.label}
                       </Link>

@@ -19,6 +19,7 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const org = useOrganization();
+  const nav = org.nav;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,7 +31,6 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
   }, []);
 
   const solid = !transparent || scrolled;
-  const btnColor = solid ? org.secondaryColor : "#ffffff";
   const currentLogo = solid ? (org.logoScrolledUrl || org.logoUrl) : org.logoUrl;
 
   const logoHref = "/";
@@ -39,17 +39,28 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
     ? navLinksProp
     : [{ href: "/", label: "Home" }];
 
+  // When transparent (hero), use white-ish link colors; when solid, use nav config colors
+  const linkColor = solid ? nav.linkColor : "rgba(255,255,255,0.7)";
+  const linkHoverColor = solid ? nav.linkHoverColor : "#ffffff";
+  const btnBorder = solid ? nav.buttonBorderColor : "#ffffff";
+  const btnHoverBg = solid ? nav.buttonHoverBgColor : nav.buttonHoverBgColor;
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
-        solid ? "bg-slate-800" : "bg-transparent"
-      }`}
+      className="fixed top-0 left-0 right-0 z-50 transition-colors duration-300"
+      style={{ backgroundColor: solid ? nav.backgroundColor : "transparent" }}
     >
       <nav className="w-full px-16 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
           href={logoHref}
-          className={currentLogo ? "block" : "font-bold text-white text-sm tracking-widest uppercase border border-white/40 px-3 py-1.5 transition-colors hover:border-white/70"}
+          className={currentLogo ? "block" : "font-bold text-sm tracking-widest uppercase px-3 py-1.5 transition-colors"}
+          style={currentLogo ? undefined : {
+            color: linkHoverColor,
+            borderWidth: 1,
+            borderStyle: "solid",
+            borderColor: linkColor,
+          }}
         >
           {currentLogo ? (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -69,7 +80,14 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
             <Link
               key={link.href}
               href={link.href}
-              className="text-white/70 hover:text-white text-sm transition-colors"
+              className="text-sm transition-colors"
+              style={{ color: linkColor }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = linkHoverColor;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = linkColor;
+              }}
             >
               {link.label}
             </Link>
@@ -84,19 +102,19 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
             style={{
               borderWidth: 1,
               borderStyle: "solid",
-              borderColor: btnColor,
-              color: btnColor,
+              borderColor: btnBorder,
+              color: btnBorder,
               fontFamily: "var(--font-body-family, Inter), sans-serif",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = solid ? btnColor : "#2563eb";
-              e.currentTarget.style.borderColor = solid ? btnColor : "#2563eb";
+              e.currentTarget.style.backgroundColor = btnHoverBg;
+              e.currentTarget.style.borderColor = btnHoverBg;
               e.currentTarget.style.color = "#ffffff";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.borderColor = btnColor;
-              e.currentTarget.style.color = btnColor;
+              e.currentTarget.style.borderColor = btnBorder;
+              e.currentTarget.style.color = btnBorder;
             }}
           >
             <LogIn className="h-4 w-4" />
@@ -107,7 +125,8 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
         {/* Mobile hamburger */}
         <button
           type="button"
-          className="md:hidden text-white"
+          className="md:hidden"
+          style={{ color: linkHoverColor }}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
@@ -121,13 +140,27 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
 
       {/* Mobile dropdown */}
       {mobileOpen && (
-        <div className="md:hidden bg-slate-800 border-t border-white/10 px-16 pb-6 pt-2 space-y-4" style={{ fontFamily: "var(--font-body-family, Inter), sans-serif" }}>
+        <div
+          className="md:hidden px-16 pb-6 pt-2 space-y-4"
+          style={{
+            backgroundColor: nav.mobileMenuBgColor,
+            borderTop: `1px solid ${nav.mobileMenuBorderColor}`,
+            fontFamily: "var(--font-body-family, Inter), sans-serif",
+          }}
+        >
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="block text-white/70 hover:text-white text-sm transition-colors"
+              className="block text-sm transition-colors"
+              style={{ color: nav.linkColor }}
               onClick={() => setMobileOpen(false)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = nav.linkHoverColor;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = nav.linkColor;
+              }}
             >
               {link.label}
             </Link>
@@ -138,8 +171,8 @@ export function MarketingHeader({ transparent = true, navLinks: navLinksProp }: 
             style={{
               borderWidth: 1,
               borderStyle: "solid",
-              borderColor: org.secondaryColor,
-              color: org.secondaryColor,
+              borderColor: nav.buttonBorderColor,
+              color: nav.buttonBorderColor,
               fontFamily: "var(--font-body-family, Inter), sans-serif",
             }}
             onClick={() => setMobileOpen(false)}

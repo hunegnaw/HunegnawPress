@@ -23,6 +23,7 @@ const websiteNav: NavItem[] = [
   { href: "/admin/blog", label: "Blog Posts", countKey: "blogPostCount", showCountWhenZero: true },
   { href: "/admin/blog/categories", label: "Blog Categories", countKey: "blogCategoryCount", showCountWhenZero: true },
   { href: "/admin/media", label: "Media Library", countKey: "mediaCount", showCountWhenZero: true },
+  { href: "/admin/nav", label: "Navigation" },
   { href: "/admin/footer", label: "Footer" },
   { href: "/admin/brand-palette", label: "Brand Palette" },
 ]

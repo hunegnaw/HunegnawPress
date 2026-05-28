@@ -772,6 +772,20 @@ export default function AdminFooterPage() {
                   onChange={(hex) => updateField("accentColor", hex)}
                 />
               </div>
+              <div className="grid gap-2">
+                <Label>Link Color</Label>
+                <ColorPicker
+                  value={footer.linkColor}
+                  onChange={(hex) => updateField("linkColor", hex)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Link Hover Color</Label>
+                <ColorPicker
+                  value={footer.linkHoverColor}
+                  onChange={(hex) => updateField("linkHoverColor", hex)}
+                />
+              </div>
             </div>
           </CardContent>
         </Card>
