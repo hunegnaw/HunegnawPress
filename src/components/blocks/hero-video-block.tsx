@@ -147,11 +147,11 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
           {/* Heading */}
           {heading && (
             <h1
-              className="heading-dark leading-[1.05] tracking-tight text-white"
+              className="heading-dark leading-[1.05] tracking-tight"
               style={{
                 animation: "fadeUp 0.8s ease 0.25s both",
                 ...(headingFont ?? {}),
-                ...(headingColor ? { color: headingColor } : {}),
+                color: headingColor || "#ffffff",
               }}
               dangerouslySetInnerHTML={{ __html: heading }}
             />

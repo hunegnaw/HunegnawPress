@@ -150,10 +150,10 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
           )}
           {heading && (
             <h1
-              className="heading-dark leading-[1.05] tracking-tight text-white"
+              className="heading-dark leading-[1.05] tracking-tight"
               style={{
                 ...(headingFont ?? {}),
-                ...(headingColor ? { color: headingColor } : {}),
+                color: headingColor || "#ffffff",
               }}
               dangerouslySetInnerHTML={{ __html: heading }}
             />
