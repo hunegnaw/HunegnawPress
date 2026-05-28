@@ -686,6 +686,14 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
                 >
                   <Plus size={12} /> Add Stat
                 </button>
+                <ColorField label="Stats Background" field="statsBackgroundColor" {...fp} />
+                <ColorField label="Stats Border Color" field="statsBorderColor" {...fp} />
+                <ColorField label="Stat Label Color" field="statsLabelColor" {...fp} />
+                <FontField label="Stat Label Font" field="statsLabelFont" hint={fontHint(t.sectionTag)} {...fp} />
+                <ColorField label="Stat Value Color" field="statsValueColor" {...fp} />
+                <FontField label="Stat Value Font" field="statsValueFont" hint={fontHint(t.heroTitle)} {...fp} />
+                <ColorField label="Stat Note Color" field="statsNoteColor" {...fp} />
+                <FontField label="Stat Note Font" field="statsNoteFont" hint={fontHint(t.body)} {...fp} />
               </div>
             );
           })()}
@@ -797,6 +805,14 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
                 >
                   <Plus size={12} /> Add Stat
                 </button>
+                <ColorField label="Stats Background" field="statsBackgroundColor" {...fp} />
+                <ColorField label="Stats Border Color" field="statsBorderColor" {...fp} />
+                <ColorField label="Stat Label Color" field="statsLabelColor" {...fp} />
+                <FontField label="Stat Label Font" field="statsLabelFont" hint={fontHint(t.sectionTag)} {...fp} />
+                <ColorField label="Stat Value Color" field="statsValueColor" {...fp} />
+                <FontField label="Stat Value Font" field="statsValueFont" hint={fontHint(t.heroTitle)} {...fp} />
+                <ColorField label="Stat Note Color" field="statsNoteColor" {...fp} />
+                <FontField label="Stat Note Font" field="statsNoteFont" hint={fontHint(t.body)} {...fp} />
               </div>
             );
           })()}

@@ -29,6 +29,16 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
   const showStats = !!props.showStats;
   const stats = (props.stats as HeroStat[]) ?? [];
 
+  const statsBackgroundColor = (props.statsBackgroundColor as string) || "rgba(16,28,18,0.7)";
+  const statsBorderColor = (props.statsBorderColor as string) || "rgba(255,255,255,0.08)";
+  const statsLabelColor = (props.statsLabelColor as string) || "rgba(255,255,255,0.4)";
+  const statsValueColor = (props.statsValueColor as string) || "rgba(255,255,255,0.9)";
+  const statsNoteColor = (props.statsNoteColor as string) || "rgba(255,255,255,0.25)";
+
+  const statsLabelFont = resolveBlockFont((props.statsLabelFont as string) || "");
+  const statsValueFont = resolveBlockFont((props.statsValueFont as string) || "");
+  const statsNoteFont = resolveBlockFont((props.statsNoteFont as string) || "");
+
   const taglineFont = resolveBlockFont((props.taglineFont as string) || "");
   const headingFont = resolveBlockFontVars((props.headingFont as string) || "", "h1");
   const subheadingFont = resolveBlockFont((props.subheadingFont as string) || "");
@@ -207,8 +217,8 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
             className="hero-stats-card"
             style={{
               alignSelf: "end",
-              background: "rgba(16,28,18,0.7)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: statsBackgroundColor,
+              border: `1px solid ${statsBorderColor}`,
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
               padding: "1.5rem",
@@ -221,7 +231,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                 style={{
                   paddingBottom: i < stats.length - 1 ? "1rem" : undefined,
                   marginBottom: i < stats.length - 1 ? "1rem" : undefined,
-                  borderBottom: i < stats.length - 1 ? "1px solid rgba(255,255,255,0.08)" : undefined,
+                  borderBottom: i < stats.length - 1 ? `1px solid ${statsBorderColor}` : undefined,
                 }}
               >
                 <div
@@ -230,8 +240,9 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                     fontWeight: 700,
                     textTransform: "uppercase",
                     letterSpacing: "0.12em",
-                    color: "rgba(255,255,255,0.4)",
+                    color: statsLabelColor,
                     fontFamily: "var(--font-body-family, Inter), sans-serif",
+                    ...(statsLabelFont ?? {}),
                   }}
                 >
                   {stat.label}
@@ -240,10 +251,11 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                   style={{
                     fontSize: "1.65rem",
                     fontWeight: 400,
-                    color: "rgba(255,255,255,0.9)",
+                    color: statsValueColor,
                     lineHeight: 1.2,
                     marginTop: "0.25rem",
                     fontFamily: "var(--font-hero-title-family, 'Inter'), sans-serif",
+                    ...(statsValueFont ?? {}),
                   }}
                 >
                   {stat.value}
@@ -252,9 +264,10 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                   <div
                     style={{
                       fontSize: "0.72rem",
-                      color: "rgba(255,255,255,0.25)",
+                      color: statsNoteColor,
                       marginTop: "0.15rem",
                       fontFamily: "var(--font-body-family, Inter), sans-serif",
+                      ...(statsNoteFont ?? {}),
                     }}
                   >
                     {stat.note}
