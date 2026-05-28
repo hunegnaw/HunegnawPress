@@ -322,7 +322,7 @@ if [ -f "prisma/schema.prisma" ]; then
     echo "Pushing database schema..."
     # Use db push while schema is actively evolving.
     # Switch to prisma migrate deploy once schema stabilizes and migrations are created.
-    npx prisma db push --skip-generate
+    npx prisma db push
     echo "Schema pushed"
 
     # Run seed (idempotent — uses upserts, safe to run every deploy)
