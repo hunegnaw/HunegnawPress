@@ -319,11 +319,27 @@ if [ -f "prisma/schema.prisma" ]; then
     echo "Running Prisma generate..."
     npx prisma generate
 
-    echo "Pushing database schema..."
-    # Use db push while schema is actively evolving.
-    # Switch to prisma migrate deploy once schema stabilizes and migrations are created.
-    npx prisma db push
-    echo "Schema pushed"
+    echo "Running database migrations..."
+    # On first deploy to a fresh DB, apply the baseline migration directly
+    # then mark it as resolved so migrate deploy doesn't try to re-run it.
+    MIGRATE_STATUS=$(npx prisma migrate status 2>&1 || true)
+    if echo "$MIGRATE_STATUS" | grep -q "Database schema is not empty"; then
+        # Tables exist but no migration history — resolve baseline
+        echo "Resolving baseline migration..."
+        npx prisma migrate resolve --applied 0_init
+    elif echo "$MIGRATE_STATUS" | grep -q "Following migration have not yet been applied"; then
+        # Fresh DB — apply migrations normally
+        npx prisma migrate deploy
+    elif echo "$MIGRATE_STATUS" | grep -q "failed"; then
+        echo "Recovering failed migrations..."
+        echo "$MIGRATE_STATUS" | grep "failed" | sed -n 's/.*`\([^`]*\)`.*/\1/p' | while read migration; do
+            [ -n "$migration" ] && npx prisma migrate resolve --rolled-back "$migration" 2>/dev/null || true
+        done
+        npx prisma migrate deploy
+    else
+        npx prisma migrate deploy
+    fi
+    echo "Migrations applied"
 
     # Run seed (idempotent — uses upserts, safe to run every deploy)
     echo "Running database seed..."
