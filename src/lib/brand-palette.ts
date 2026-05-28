@@ -75,7 +75,10 @@ export function getAllBrandHexValues(palette: BrandColorCategory[] = DEFAULT_BRA
   const result: string[] = [];
   for (const cat of palette) {
     for (const color of cat.colors) {
-      const hex = color.hex.toLowerCase();
+      const opacity = color.opacity ?? 1;
+      const hex = opacity < 1
+        ? color.hex.toLowerCase() + Math.round(opacity * 255).toString(16).padStart(2, "0")
+        : color.hex.toLowerCase();
       if (!seen.has(hex)) { seen.add(hex); result.push(hex); }
     }
   }
@@ -83,7 +86,8 @@ export function getAllBrandHexValues(palette: BrandColorCategory[] = DEFAULT_BRA
 }
 
 export function findBrandColor(hex: string, palette: BrandColorCategory[] = DEFAULT_BRAND_PALETTE): BrandColor | undefined {
-  const normalized = hex.toLowerCase();
+  // Strip alpha channel (HEX8 → HEX6) for comparison
+  const normalized = hex.toLowerCase().slice(0, 7);
   for (const cat of palette) {
     for (const color of cat.colors) {
       if (color.hex.toLowerCase() === normalized) return color;

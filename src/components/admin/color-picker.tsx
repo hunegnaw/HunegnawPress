@@ -193,9 +193,9 @@ export function ColorPicker({ value, onChange }: ColorPickerProps) {
       <BrandColorPickerModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        onSelect={(hex) => {
-          setHexInput(hex);
-          onChange(buildColor(hex, opacity));
+        onSelect={(color) => {
+          setHexInput(extractHex6(color));
+          onChange(color);
         }}
         currentColor={currentColor}
       />

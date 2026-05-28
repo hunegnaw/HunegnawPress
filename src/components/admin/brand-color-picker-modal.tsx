@@ -109,7 +109,11 @@ export function BrandColorPickerModal({
                               <button
                                 type="button"
                                 onClick={() => {
-                                  onSelect(color.hex.toLowerCase());
+                                  const op = color.opacity ?? 1;
+                                  const val = op < 1
+                                    ? color.hex.toLowerCase() + Math.round(op * 255).toString(16).padStart(2, "0")
+                                    : color.hex.toLowerCase();
+                                  onSelect(val);
                                   onClose();
                                 }}
                                 className={`w-14 h-14 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 flex flex-col items-center justify-end pb-1 overflow-hidden relative ${
