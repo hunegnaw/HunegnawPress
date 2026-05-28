@@ -12,6 +12,7 @@ interface SavedColorsContextValue {
   colors: string[];
   addColor: (color: string) => void;
   removeColor: (color: string) => void;
+  refetch: () => void;
   brandPalette: BrandColorCategory[];
   findBrandColor: (hex: string) => BrandColor | undefined;
 }
@@ -20,6 +21,7 @@ const SavedColorsContext = createContext<SavedColorsContextValue>({
   colors: [],
   addColor: () => {},
   removeColor: () => {},
+  refetch: () => {},
   brandPalette: BRAND_PALETTE,
   findBrandColor: findBrandColorFn,
 });
@@ -31,7 +33,7 @@ export function useSavedColors() {
 export function SavedColorsProvider({ children }: { children: React.ReactNode }) {
   const [colors, setColors] = useState<string[]>([]);
 
-  useEffect(() => {
+  const refetch = useCallback(() => {
     fetch("/api/admin/saved-colors")
       .then((res) => res.json())
       .then((data) => {
@@ -41,6 +43,10 @@ export function SavedColorsProvider({ children }: { children: React.ReactNode })
       })
       .catch(console.error);
   }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const persist = useCallback((updated: string[]) => {
     fetch("/api/admin/saved-colors", {
@@ -81,6 +87,7 @@ export function SavedColorsProvider({ children }: { children: React.ReactNode })
         colors,
         addColor,
         removeColor,
+        refetch,
         brandPalette: BRAND_PALETTE,
         findBrandColor: findBrandColorFn,
       }}

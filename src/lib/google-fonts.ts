@@ -11,9 +11,13 @@ export const GOOGLE_FONTS = [
 export function getGoogleFontUrl(families: string[]): string {
   const filtered = families.filter((f) => f !== "Geist");
   if (filtered.length === 0) return "";
-  const weights = "300;400;500;600;700;800;900";
+  const weights = [300, 400, 500, 600, 700, 800, 900];
+  const specs = weights
+    .map((w) => `0,${w}`)
+    .concat(weights.map((w) => `1,${w}`))
+    .join(";");
   const params = filtered
-    .map((f) => `family=${f.replace(/ /g, "+")}:wght@${weights}`)
+    .map((f) => `family=${f.replace(/ /g, "+")}:ital,wght@${specs}`)
     .join("&");
   return `https://fonts.googleapis.com/css2?${params}&display=swap`;
 }

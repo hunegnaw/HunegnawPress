@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { BRAND_PALETTE, type BrandColor } from "@/lib/brand-palette";
 import { Palette, Copy, Check, Loader2, RefreshCw } from "lucide-react";
+import { useSavedColors } from "@/components/providers/saved-colors-provider";
 
 function isLightColor(hex: string): boolean {
   const c = hex.replace("#", "");
@@ -90,6 +91,7 @@ export default function BrandPalettePage() {
   const [syncing, setSyncing] = useState(false);
   const [synced, setSynced] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { refetch } = useSavedColors();
 
   async function handleSync() {
     if (!confirm("This will replace all currently saved colors with the full brand palette. Continue?")) return;
@@ -102,6 +104,7 @@ export default function BrandPalettePage() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Failed to sync colors");
       }
+      refetch();
       setSynced(true);
       setTimeout(() => setSynced(false), 3000);
     } catch (err) {
