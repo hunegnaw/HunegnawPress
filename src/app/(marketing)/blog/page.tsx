@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
     select: { metaTitle: true, metaDescription: true, title: true },
   });
   return {
-    ...(blogPage?.metaTitle ? { title: blogPage.metaTitle } : {}),
+    title: blogPage?.metaTitle || blogPage?.title || "Blog",
     description: blogPage?.metaDescription || "",
   };
 }

@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
   if (!homepage) return {};
   return {
-    ...(homepage.metaTitle ? { title: homepage.metaTitle } : {}),
+    title: homepage.metaTitle || homepage.title,
     description: homepage.metaDescription || "",
     openGraph: {
       title: homepage.metaTitle || homepage.title,

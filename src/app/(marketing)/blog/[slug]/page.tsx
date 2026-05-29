@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   });
   if (!post) return {};
   return {
-    ...(post.metaTitle ? { title: post.metaTitle } : {}),
+    title: post.metaTitle || post.title,
     description: post.metaDescription || post.excerpt || "",
     openGraph: {
       title: post.metaTitle || post.title,
