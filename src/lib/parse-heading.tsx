@@ -12,7 +12,7 @@ export function parseHeading(text: string): React.ReactNode {
         return (
           <em
             key={`${lineIndex}-${partIndex}`}
-            style={{ color: "#93c5fd", fontStyle: "italic" }}
+            style={{ color: "var(--site-secondary-light, #93c5fd)", fontStyle: "italic" }}
           >
             {part.slice(2, -2)}
           </em>

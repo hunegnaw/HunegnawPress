@@ -320,19 +320,19 @@ body {
 /* Heading accent: em on light backgrounds */
 .heading-light em {
   font-style: italic;
-  color: #1d4ed8;
+  color: var(--site-secondary-dark, #1d4ed8);
 }
 
 /* Heading accent: em on dark backgrounds */
 .heading-dark em {
   font-style: italic;
-  color: #93c5fd;
+  color: var(--site-secondary-light, #93c5fd);
 }
 
 /* Quote accent: em on dark backgrounds — NOT italic */
 .quote-accent em {
   font-style: normal;
-  color: #93c5fd;
+  color: var(--site-secondary-light, #93c5fd);
 }
 
 @keyframes fadeUp {
@@ -342,8 +342,8 @@ body {
 
 /* FAQ block styles */
 .faq-note {
-  border-left: 3px solid #2563eb;
-  background: #eff6ff;
+  border-left: 3px solid var(--site-secondary, #2563eb);
+  background: var(--site-secondary-lighter, #eff6ff);
   padding: 16px 20px;
   margin: 16px 0;
   border-radius: 0 4px 4px 0;
@@ -370,18 +370,18 @@ body {
   content: "\2014";
   position: absolute;
   left: 0;
-  color: #2563eb;
+  color: var(--site-secondary, #2563eb);
   font-weight: 500;
 }
 
 .faq-answer a {
-  color: #2563eb;
+  color: var(--site-secondary, #2563eb);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .faq-answer a:hover {
-  color: #1d4ed8;
+  color: var(--site-secondary-dark, #1d4ed8);
 }
 
 .faq-answer p {
@@ -405,6 +405,6 @@ body {
 
 .faq-sidebar-link.active {
   color: #1e293b;
-  border-left-color: #2563eb;
+  border-left-color: var(--site-secondary, #2563eb);
   font-weight: 500;
 }

@@ -80,7 +80,13 @@ export default async function Home() {
     `--font-${prefix}-color:${s.color}`,
     `--font-${prefix}-size:${s.fontSize}`,
   ]).join(";");
-  const typoCss = `:root{${typoCssVars}}`;
+  const primary = org?.primaryColor || "#334155";
+  const secondary = org?.secondaryColor || "#2563eb";
+  const accent = org?.accentColor || "#3b82f6";
+  const hexRgb = (h: string) => { const x = h.replace("#",""); return `${parseInt(x.slice(0,2),16)} ${parseInt(x.slice(2,4),16)} ${parseInt(x.slice(4,6),16)}`; };
+  const mix = (hex: string, tgt: string, a: number) => { const h = hex.replace("#",""); const t = tgt.replace("#",""); const m = (i: number) => Math.round(parseInt(h.slice(i,i+2),16) + (parseInt(t.slice(i,i+2),16) - parseInt(h.slice(i,i+2),16)) * a); return `#${m(0).toString(16).padStart(2,"0")}${m(2).toString(16).padStart(2,"0")}${m(4).toString(16).padStart(2,"0")}`; };
+  const colorVars = `--site-primary:${primary};--site-secondary:${secondary};--site-accent:${accent};--site-primary-rgb:${hexRgb(primary)};--site-secondary-rgb:${hexRgb(secondary)};--site-accent-rgb:${hexRgb(accent)};--site-secondary-light:${mix(secondary,"#ffffff",0.5)};--site-secondary-lighter:${mix(secondary,"#ffffff",0.7)};--site-secondary-dark:${mix(secondary,"#000000",0.2)}`;
+  const typoCss = `:root{${typoCssVars};${colorVars}}`;
   const navLinks = navPages.map((p) => ({
     href: p.isHomepage ? "/" : `/${p.slug}`,
     label: p.navLabel || p.title,

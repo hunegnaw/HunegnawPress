@@ -7,6 +7,21 @@ import { getGoogleFontUrl } from "@/lib/google-fonts";
 
 export const dynamic = "force-dynamic";
 
+function hexToRgb(hex: string): string {
+  const h = hex.replace("#", "");
+  return `${parseInt(h.slice(0, 2), 16)} ${parseInt(h.slice(2, 4), 16)} ${parseInt(h.slice(4, 6), 16)}`;
+}
+
+function mixHex(hex: string, target: string, amount: number): string {
+  const h = hex.replace("#", "");
+  const t = target.replace("#", "");
+  const mix = (a: number, b: number) => Math.round(a + (b - a) * amount);
+  const r = mix(parseInt(h.slice(0, 2), 16), parseInt(t.slice(0, 2), 16), amount);
+  const g = mix(parseInt(h.slice(2, 4), 16), parseInt(t.slice(2, 4), 16), amount);
+  const b = mix(parseInt(h.slice(4, 6), 16), parseInt(t.slice(4, 6), 16), amount);
+  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
+}
+
 function buildTypographyCss(typography: TypographySettings): string {
   const vars: string[] = [];
   const categories = [
@@ -58,6 +73,12 @@ export default async function MarketingLayout({
   );
   const typoCss = buildTypographyCss(typography);
 
+  // Inject site color CSS variables from org settings
+  const primary = org?.primaryColor || "#334155";
+  const secondary = org?.secondaryColor || "#2563eb";
+  const accent = org?.accentColor || "#3b82f6";
+  const colorCss = `:root{--site-primary:${primary};--site-secondary:${secondary};--site-accent:${accent};--site-primary-rgb:${hexToRgb(primary)};--site-secondary-rgb:${hexToRgb(secondary)};--site-accent-rgb:${hexToRgb(accent)};--site-secondary-light:${mixHex(secondary, "#ffffff", 0.5)};--site-secondary-lighter:${mixHex(secondary, "#ffffff", 0.7)};--site-secondary-dark:${mixHex(secondary, "#000000", 0.2)}}`;
+
   // Collect unique font families from all typography settings and load via Google Fonts
   const fontFamilies = Array.from(
     new Set(
@@ -76,7 +97,7 @@ export default async function MarketingLayout({
       {googleFontUrl && (
         <link rel="stylesheet" href={googleFontUrl} />
       )}
-      <style dangerouslySetInnerHTML={{ __html: typoCss }} />
+      <style dangerouslySetInnerHTML={{ __html: typoCss + colorCss }} />
       <MarketingHeader navLinks={navLinks} />
       <div className="min-h-screen flex flex-col marketing-typography">
         <main className="flex-1">{children}</main>
