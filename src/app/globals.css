@@ -135,6 +135,7 @@ body {
   html {
     @apply font-sans;
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 }
 
@@ -288,6 +289,32 @@ body {
   font-family: var(--font-subtitle-family, 'Inter'), sans-serif;
   font-weight: var(--font-subtitle-weight, 300);
   font-style: var(--font-subtitle-style, italic);
+}
+
+/* Mobile font scaling — scale admin-set sizes down on small screens */
+@media (max-width: 640px) {
+  .marketing-typography h1,
+  .marketing-typography .prose h1 {
+    font-size: calc(var(--font-h1-size, 48px) * 0.55) !important;
+  }
+  .marketing-typography h2,
+  .marketing-typography .prose h2 {
+    font-size: calc(var(--font-h2-size, 36px) * 0.65) !important;
+  }
+  .marketing-typography h3,
+  .marketing-typography .prose h3 {
+    font-size: calc(var(--font-h3-size, 28px) * 0.75) !important;
+  }
+  .marketing-typography h4,
+  .marketing-typography .prose h4 {
+    font-size: calc(var(--font-h4-size, 22px) * 0.8) !important;
+  }
+  .marketing-typography .blog-card h2 {
+    font-size: calc(var(--font-blog-card-title-size, 24px) * 0.75) !important;
+  }
+  .marketing-typography .blog-card p {
+    font-size: calc(var(--font-blog-card-excerpt-size, 18px) * 0.8) !important;
+  }
 }
 
 /* Heading accent: em on light backgrounds */
