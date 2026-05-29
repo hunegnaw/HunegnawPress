@@ -43,7 +43,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
 
   const headingColor = (props.headingColor as string) || "";
   const subheadingColor = (props.subheadingColor as string) || "";
-  const ctaButtonColor = (props.ctaButtonColor as string) || "#2563eb";
+  const ctaButtonColor = (props.ctaButtonColor as string) || "var(--site-secondary, #2563eb)";
   const ctaButtonTextColor = (props.ctaButtonTextColor as string) || "#ffffff";
   const taglineColor = (props.taglineColor as string) || "";
   const taglineAccentColor = (props.taglineAccentColor as string) || "";
@@ -95,7 +95,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse at 80% 20%, rgba(37,99,235,0.08) 0%, transparent 60%)",
+              "radial-gradient(ellipse at 80% 20%, rgb(var(--site-secondary-rgb, 37 99 235) / 0.08) 0%, transparent 60%)",
           }}
         />
       )}
@@ -128,7 +128,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
                 className="inline-block h-px w-6"
                 style={{
                   backgroundColor:
-                    taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)",
+                    taglineAccentColor || taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))",
                 }}
               />
               <span
@@ -140,7 +140,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
                   fontWeight:
                     "var(--font-section-tag-weight, 400)" as unknown as number,
                   color:
-                    taglineColor || "var(--font-section-tag-color, #2563eb)",
+                    taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))",
                   ...(taglineFont ?? {}),
                 }}
               >
@@ -167,7 +167,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
                 fontStyle: "var(--font-subtitle-style, normal)",
                 fontSize: "var(--font-subtitle-size, clamp(16px, 2vw, 22px))",
                 lineHeight: 1.6,
-                color: subheadingColor || "rgba(147,197,253,0.65)",
+                color: subheadingColor || "rgb(var(--site-secondary-rgb, 147 197 253) / 0.65)",
                 ...(subheadingFont ?? {}),
               }}
               dangerouslySetInnerHTML={{ __html: subheading }}
@@ -263,7 +263,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
           className="absolute bottom-0 left-0 right-0 h-px"
           style={{
             background:
-              `linear-gradient(90deg, transparent 0%, ${dividerColor || "#2563eb"} 50%, transparent 100%)`,
+              `linear-gradient(90deg, transparent 0%, ${dividerColor || "var(--site-secondary, #2563eb)"} 50%, transparent 100%)`,
           }}
         />
       )}

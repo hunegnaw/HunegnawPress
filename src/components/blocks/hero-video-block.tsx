@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
 
 interface HeroVideoBlockProps {
@@ -48,7 +48,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
   const taglineColor = (props.taglineColor as string) || "";
   const headingColor = (props.headingColor as string) || "";
   const subheadingColor = (props.subheadingColor as string) || "";
-  const ctaButtonColor = (props.ctaButtonColor as string) || "#2563eb";
+  const ctaButtonColor = (props.ctaButtonColor as string) || "var(--site-secondary, #2563eb)";
   const ctaButtonTextColor = (props.ctaButtonTextColor as string) || "#ffffff";
   const cta2ButtonTextColor = (props.cta2ButtonTextColor as string) || "";
   const taglineAccentColor = (props.taglineAccentColor as string) || "";
@@ -72,7 +72,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at 70% 50%, rgba(37,99,235,0.08) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(30,41,59,0.6) 0%, transparent 50%)",
+            "radial-gradient(ellipse at 70% 50%, rgb(var(--site-secondary-rgb, 37 99 235) / 0.08) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(30,41,59,0.6) 0%, transparent 50%)",
         }}
       />
       {/* Grid overlay */}
@@ -80,7 +80,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
         className="absolute inset-0"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(147,197,253,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(147,197,253,0.03) 1px, transparent 1px)",
+            "linear-gradient(rgb(var(--site-secondary-rgb, 37 99 235) / 0.03) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--site-secondary-rgb, 37 99 235) / 0.03) 1px, transparent 1px)",
           backgroundSize: "80px 80px",
         }}
       />
@@ -127,7 +127,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
             >
               <span
                 className="inline-block h-px w-8"
-                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
+                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))" }}
               />
               <span
                 className="uppercase tracking-[0.2em]"
@@ -135,7 +135,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                   fontFamily: "var(--font-section-tag-family, Inter), sans-serif",
                   fontSize: "var(--font-section-tag-size, 10px)",
                   fontWeight: "var(--font-section-tag-weight, 400)" as unknown as number,
-                  color: taglineColor || "var(--font-section-tag-color, #2563eb)",
+                  color: taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))",
                   ...(taglineFont ?? {}),
                 }}
               >
@@ -167,7 +167,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
                 fontStyle: "var(--font-subtitle-style, normal)",
                 fontSize: "var(--font-subtitle-size, clamp(16px, 2vw, 22px))",
                 lineHeight: 1.6,
-                color: subheadingColor || "rgba(147,197,253,0.65)",
+                color: subheadingColor || "rgb(var(--site-secondary-rgb, 147 197 253) / 0.65)",
                 animation: "fadeUp 0.8s ease 0.4s both",
                 ...(subheadingFont ?? {}),
               }}
@@ -199,13 +199,14 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
               {ctaText2 && ctaUrl2 && (
                 <a
                   href={ctaUrl2}
-                  className="inline-block px-8 py-3.5 text-[11px] font-normal uppercase tracking-[0.12em] transition hover:border-[#93c5fd] hover:text-[#93c5fd]"
+                  className="cta2-hero-video inline-block px-8 py-3.5 text-[11px] font-normal uppercase tracking-[0.12em] transition"
                   style={{
                     fontFamily: "var(--font-body-family, Inter), sans-serif",
-                    border: `0.5px solid ${cta2BorderColor || "rgba(147,197,253,0.4)"}`,
-                    color: cta2ButtonTextColor || "rgba(147,197,253,0.8)",
+                    border: `0.5px solid ${cta2BorderColor || "rgb(var(--site-secondary-rgb, 147 197 253) / 0.4)"}`,
+                    color: cta2ButtonTextColor || "rgb(var(--site-secondary-rgb, 147 197 253) / 0.8)",
+                    "--cta2-hover-color": "rgb(var(--site-secondary-rgb, 147 197 253) / 1)",
                     ...(cta2ButtonFont ?? {}),
-                  }}
+                  } as React.CSSProperties}
                 >
                   {ctaText2}
                 </a>
@@ -287,11 +288,17 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
         className="absolute bottom-0 left-0 right-0 h-px"
         style={{
           background:
-            `linear-gradient(90deg, transparent, ${dividerColor || "rgba(37,99,235,0.4)"}, transparent)`,
+            `linear-gradient(90deg, transparent, ${dividerColor || "rgb(var(--site-secondary-rgb, 37 99 235) / 0.4)"}, transparent)`,
         }}
       />
 
-      {/* Responsive: hide stats card on mobile */}
+      {/* CTA2 hover + Responsive: hide stats card on mobile */}
+      <style>{`
+        .cta2-hero-video:hover {
+          border-color: var(--cta2-hover-color) !important;
+          color: var(--cta2-hover-color) !important;
+        }
+      `}</style>
       {hasStats && (
         <style>{`
           @media (max-width: 960px) {
