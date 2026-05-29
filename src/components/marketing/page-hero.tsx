@@ -56,7 +56,7 @@ export function PageHero({
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              "radial-gradient(ellipse at 80% 20%, rgba(37,99,235,0.08) 0%, transparent 60%)",
+              "radial-gradient(ellipse at 80% 20%, rgb(var(--site-secondary-rgb, 37 99 235) / 0.08) 0%, transparent 60%)",
           }}
         />
       )}
@@ -68,7 +68,7 @@ export function PageHero({
               <div className="mb-6 flex items-center gap-3">
                 <span
                   className="inline-block h-px w-6"
-                  style={{ backgroundColor: "#2563eb" }}
+                  style={{ backgroundColor: "var(--site-secondary, #2563eb)" }}
                 />
                 <span
                   className="uppercase tracking-[0.18em]"
@@ -78,7 +78,7 @@ export function PageHero({
                     fontSize: "var(--font-section-tag-size, 10px)",
                     fontWeight:
                       "var(--font-section-tag-weight, 400)" as unknown as number,
-                    color: "var(--font-section-tag-color, #60a5fa)",
+                    color: "var(--font-section-tag-color, var(--site-secondary-light, #60a5fa))",
                   }}
                 >
                   {tagline}
@@ -112,7 +112,7 @@ export function PageHero({
                   fontStyle: "italic",
                   fontSize: "64px",
                   lineHeight: 1.1,
-                  color: "#93c5fd",
+                  color: "var(--site-secondary-light, #93c5fd)",
                 }}
                 dangerouslySetInnerHTML={{ __html: subtitle }}
               />
@@ -127,7 +127,7 @@ export function PageHero({
                   fontStyle: "italic",
                   fontSize: "18px",
                   lineHeight: 1.6,
-                  color: "rgba(147,197,253,0.65)",
+                  color: "rgb(var(--site-secondary-rgb, 147 197 253) / 0.65)",
                 }}
                 dangerouslySetInnerHTML={{ __html: description }}
               />
@@ -158,7 +158,7 @@ export function PageHero({
           className="absolute bottom-0 left-0 right-0 h-px"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, #2563eb 50%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, var(--site-secondary, #2563eb) 50%, transparent 100%)",
           }}
         />
       )}

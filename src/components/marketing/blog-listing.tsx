@@ -145,7 +145,7 @@ export async function BlogListing({ searchParams, basePath = "/blog", heroTitle,
                     </div>
                   )}
                   <h2
-                    className="mt-2 group-hover:text-blue-600 transition-colors line-clamp-2"
+                    className="mt-2 group-hover:text-[var(--site-secondary)] transition-colors line-clamp-2"
                     style={{
                       fontFamily: "var(--font-blog-card-title-family, 'Inter', sans-serif)",
                       fontWeight: "var(--font-blog-card-title-weight, 600)" as unknown as number,
@@ -226,7 +226,7 @@ export async function BlogListing({ searchParams, basePath = "/blog", heroTitle,
                   href={`${basePath}?tag=${tag.slug}`}
                   className={`px-3 py-1 text-xs rounded-full transition-colors ${
                     tagSlug === tag.slug
-                      ? "bg-blue-600 text-white"
+                      ? "bg-[var(--site-secondary)] text-white"
                       : "bg-white text-gray-600 hover:bg-gray-100 border"
                   }`}
                 >
