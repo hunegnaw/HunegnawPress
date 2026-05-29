@@ -15,10 +15,10 @@ function hexToRgb(hex: string): string {
 function mixHex(hex: string, target: string, amount: number): string {
   const h = hex.replace("#", "");
   const t = target.replace("#", "");
-  const mix = (a: number, b: number) => Math.round(a + (b - a) * amount);
-  const r = mix(parseInt(h.slice(0, 2), 16), parseInt(t.slice(0, 2), 16), amount);
-  const g = mix(parseInt(h.slice(2, 4), 16), parseInt(t.slice(2, 4), 16), amount);
-  const b = mix(parseInt(h.slice(4, 6), 16), parseInt(t.slice(4, 6), 16), amount);
+  const m = (a: number, b: number) => Math.round(a + (b - a) * amount);
+  const r = m(parseInt(h.slice(0, 2), 16), parseInt(t.slice(0, 2), 16));
+  const g = m(parseInt(h.slice(2, 4), 16), parseInt(t.slice(2, 4), 16));
+  const b = m(parseInt(h.slice(4, 6), 16), parseInt(t.slice(4, 6), 16));
   return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`;
 }
 
