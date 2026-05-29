@@ -1007,6 +1007,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
       const rightBlocks = (props.rightBlocks as SubBlockData[]) || [];
       return (
         <div className="space-y-4">
+          <ColorField label="Background Color" field="backgroundColor" {...fp} />
           <SelectField
             label="Left Column Width"
             field="leftWidth"

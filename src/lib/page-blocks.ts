@@ -91,6 +91,7 @@ export const BLOCK_TYPES = {
     defaultProps: {
       leftContent: "", rightContent: "", leftWidth: "1/2",
       leftBlocks: [] as SubBlockData[], rightBlocks: [] as SubBlockData[],
+      backgroundColor: "",
     },
   },
   contact_form: {
