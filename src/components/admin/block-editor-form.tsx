@@ -1217,9 +1217,10 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
       );
 
     case "asset_cards": {
-      const cards = (props.cards as { name: string; description: string }[]) || [];
+      const cards = (props.cards as { name: string; description: string; url?: string }[]) || [];
       return (
         <div className="space-y-4">
+          {/* Section header */}
           <InputField label="Tagline" field="tagline" {...fp} />
           <ColorField label="Tagline Color" field="taglineColor" {...fp} />
           <ColorField label="Tagline Accent Color" field="taglineAccentColor" {...fp} />
@@ -1233,11 +1234,9 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           <InputField label="Subtitle" field="subtitle" {...fp} />
           <ColorField label="Subtitle Color" field="subtitleColor" {...fp} />
           <FontField label="Subtitle Font" field="subtitleFont" hint={fontHint(t.subtitle)} {...fp} />
-          <ColorField label="Card Name Color" field="cardNameColor" {...fp} />
-          <FontField label="Card Name Font" field="cardNameFont" hint={fontHint(t.body)} {...fp} />
-          <ColorField label="Card Description Color" field="cardDescColor" {...fp} />
-          <FontField label="Card Description Font" field="cardDescFont" hint={fontHint(t.body)} {...fp} />
-          <ColorField label="Background Color" field="backgroundColor" {...fp} />
+
+          {/* Section background */}
+          <ColorField label="Section Background" field="backgroundColor" {...fp} />
           <SelectField
             label="Max Width"
             field="maxWidth"
@@ -1250,12 +1249,38 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
             ]}
             {...fp}
           />
+
+          {/* Card colors — default state */}
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pt-2">Card Default State</p>
+          <ColorField label="Card Background" field="cardBgColor" {...fp} />
+          <ColorField label="Card Name Color" field="cardNameColor" {...fp} />
+          <FontField label="Card Name Font" field="cardNameFont" hint={fontHint(t.h3)} {...fp} />
+          <ColorField label="Card Description Color" field="cardDescColor" {...fp} />
+          <FontField label="Card Description Font" field="cardDescFont" hint={fontHint(t.body)} {...fp} />
+          <ColorField label="Index Number Color" field="cardIndexColor" {...fp} />
+          <ColorField label="Separator Line Color" field="cardSeparatorColor" {...fp} />
+          <ColorField label="Grid Border Color" field="gridBorderColor" {...fp} />
+
+          {/* Card colors — hover state */}
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pt-2">Card Hover State</p>
+          <ColorField label="Hover Background" field="cardHoverBgColor" {...fp} />
+          <ColorField label="Hover Name Color" field="cardNameHoverColor" {...fp} />
+          <ColorField label="Hover Description Color" field="cardDescHoverColor" {...fp} />
+          <ColorField label="Hover Index Number Color" field="cardIndexHoverColor" {...fp} />
+
+          {/* Link / CTA */}
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pt-2">Card Link</p>
+          <InputField label="Link Text" field="cardLinkText" {...fp} />
+          <ColorField label="Link Color" field="cardLinkColor" {...fp} />
+          <ColorField label="Link Hover Color" field="cardLinkHoverColor" {...fp} />
+
+          {/* Cards list */}
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-2">
               Cards
             </label>
             {cards.map((card, i) => (
-              <div key={i} className="flex items-start gap-2 mb-2 p-2 border rounded">
+              <div key={i} className="flex items-start gap-2 mb-2 p-3 border rounded bg-gray-50">
                 <div className="flex-1 space-y-1">
                   <input
                     type="text"
@@ -1279,6 +1304,17 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
                     rows={2}
                     className="w-full px-2 py-1 text-xs border rounded"
                   />
+                  <input
+                    type="text"
+                    value={card.url || ""}
+                    onChange={(e) => {
+                      const updated = [...cards];
+                      updated[i] = { ...updated[i], url: e.target.value };
+                      updateProp("cards", updated);
+                    }}
+                    placeholder="Link URL (e.g. /services/equities)"
+                    className="w-full px-2 py-1 text-xs border rounded"
+                  />
                 </div>
                 <button
                   type="button"
@@ -1291,8 +1327,8 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
             ))}
             <button
               type="button"
-              onClick={() => updateProp("cards", [...cards, { name: "", description: "" }])}
-              className="flex items-center gap-1 text-xs text-[#2563eb] hover:underline"
+              onClick={() => updateProp("cards", [...cards, { name: "", description: "", url: "" }])}
+              className="flex items-center gap-1 text-xs text-gray-500 hover:underline"
             >
               <Plus size={12} /> Add Card
             </button>

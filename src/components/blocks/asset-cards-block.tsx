@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
 
 interface AssetCardsBlockProps {
@@ -12,7 +13,7 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
   const heading = (props.heading as string) ?? "";
   const subtitle = (props.subtitle as string) ?? "";
   const cards =
-    (props.cards as { name: string; description: string }[]) ?? [];
+    (props.cards as { name: string; description: string; url?: string }[]) ?? [];
   const backgroundColor = (props.backgroundColor as string) || "#f8fafc";
   const taglineColor = (props.taglineColor as string) || "";
   const taglineAccentColor = (props.taglineAccentColor as string) || "";
@@ -32,8 +33,20 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
     "7xl": "max-w-7xl",
   };
 
-  const cardNameColor = (props.cardNameColor as string) || "";
-  const cardDescColor = (props.cardDescColor as string) || "";
+  // Card colors — all customizable
+  const cardBgColor = (props.cardBgColor as string) || "#ffffff";
+  const cardHoverBgColor = (props.cardHoverBgColor as string) || "#1e293b";
+  const cardNameColor = (props.cardNameColor as string) || "#1e293b";
+  const cardNameHoverColor = (props.cardNameHoverColor as string) || "var(--site-secondary-light, #93c5fd)";
+  const cardDescColor = (props.cardDescColor as string) || "#64748b";
+  const cardDescHoverColor = (props.cardDescHoverColor as string) || "rgba(255,255,255,0.55)";
+  const cardIndexColor = (props.cardIndexColor as string) || "rgba(15,23,42,0.06)";
+  const cardIndexHoverColor = (props.cardIndexHoverColor as string) || "rgb(var(--site-secondary-rgb, 147 197 253) / 0.2)";
+  const cardSeparatorColor = (props.cardSeparatorColor as string) || "var(--site-secondary, #2563eb)";
+  const cardLinkColor = (props.cardLinkColor as string) || "var(--site-secondary, #2563eb)";
+  const cardLinkHoverColor = (props.cardLinkHoverColor as string) || "var(--site-secondary-light, #93c5fd)";
+  const cardLinkText = (props.cardLinkText as string) || "Explore";
+  const gridBorderColor = (props.gridBorderColor as string) || "rgba(15,23,42,0.1)";
 
   const taglineFont = resolveBlockFont((props.taglineFont as string) || "");
   const headingFont = resolveBlockFontVars((props.headingFont as string) || "", "h2");
@@ -94,10 +107,28 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
 
         <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-          style={{ gap: "1px", backgroundColor: "rgba(15,23,42,0.1)" }}
+          style={{ gap: "1px", backgroundColor: gridBorderColor }}
         >
           {cards.map((card, i) => (
-            <AssetCard key={i} card={card} index={i} cardNameColor={cardNameColor} cardDescColor={cardDescColor} cardNameFont={cardNameFont} cardDescFont={cardDescFont} />
+            <AssetCard
+              key={i}
+              card={card}
+              index={i}
+              cardBgColor={cardBgColor}
+              cardHoverBgColor={cardHoverBgColor}
+              cardNameColor={cardNameColor}
+              cardNameHoverColor={cardNameHoverColor}
+              cardDescColor={cardDescColor}
+              cardDescHoverColor={cardDescHoverColor}
+              cardIndexColor={cardIndexColor}
+              cardIndexHoverColor={cardIndexHoverColor}
+              cardSeparatorColor={cardSeparatorColor}
+              cardLinkColor={cardLinkColor}
+              cardLinkHoverColor={cardLinkHoverColor}
+              cardLinkText={cardLinkText}
+              cardNameFont={cardNameFont}
+              cardDescFont={cardDescFont}
+            />
           ))}
         </div>
       </div>
@@ -108,25 +139,46 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
 function AssetCard({
   card,
   index,
+  cardBgColor,
+  cardHoverBgColor,
   cardNameColor,
+  cardNameHoverColor,
   cardDescColor,
+  cardDescHoverColor,
+  cardIndexColor,
+  cardIndexHoverColor,
+  cardSeparatorColor,
+  cardLinkColor,
+  cardLinkHoverColor,
+  cardLinkText,
   cardNameFont,
   cardDescFont,
 }: {
-  card: { name: string; description: string };
+  card: { name: string; description: string; url?: string };
   index: number;
+  cardBgColor: string;
+  cardHoverBgColor: string;
   cardNameColor: string;
+  cardNameHoverColor: string;
   cardDescColor: string;
+  cardDescHoverColor: string;
+  cardIndexColor: string;
+  cardIndexHoverColor: string;
+  cardSeparatorColor: string;
+  cardLinkColor: string;
+  cardLinkHoverColor: string;
+  cardLinkText: string;
   cardNameFont: import("react").CSSProperties | null;
   cardDescFont: import("react").CSSProperties | null;
 }) {
   const [hovered, setHovered] = useState(false);
 
-  return (
+  const content = (
     <div
-      className="relative cursor-default overflow-hidden px-7 py-9 transition-all duration-300"
+      className="relative overflow-hidden px-7 py-9 transition-all duration-300"
       style={{
-        backgroundColor: hovered ? "#1e293b" : "#ffffff",
+        backgroundColor: hovered ? cardHoverBgColor : cardBgColor,
+        cursor: card.url ? "pointer" : "default",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -137,7 +189,7 @@ function AssetCard({
           fontFamily: "var(--font-section-heading-family, 'Inter'), sans-serif",
           fontSize: "72px",
           fontWeight: 300,
-          color: hovered ? "rgb(var(--site-secondary-rgb, 147 197 253) / 0.2)" : "rgba(15,23,42,0.06)",
+          color: hovered ? cardIndexHoverColor : cardIndexColor,
         }}
       >
         {String(index + 1).padStart(2, "0")}
@@ -145,7 +197,7 @@ function AssetCard({
 
       <div
         className="mb-5 h-px w-8"
-        style={{ backgroundColor: "var(--site-secondary, #2563eb)" }}
+        style={{ backgroundColor: cardSeparatorColor }}
       />
 
       <h3
@@ -154,7 +206,7 @@ function AssetCard({
           fontFamily: "var(--font-section-heading-family, 'Inter'), sans-serif",
           fontSize: "22px",
           fontWeight: 500,
-          color: hovered ? "var(--site-secondary-light, #93c5fd)" : (cardNameColor || "#1e293b"),
+          color: hovered ? cardNameHoverColor : cardNameColor,
           ...(cardNameFont ?? {}),
         }}
       >
@@ -167,23 +219,35 @@ function AssetCard({
           fontFamily: "var(--font-body-family, Inter), sans-serif",
           fontSize: "12px",
           fontWeight: 300,
-          color: hovered ? "rgba(255,255,255,0.55)" : (cardDescColor || "#64748b"),
+          color: hovered ? cardDescHoverColor : cardDescColor,
           ...(cardDescFont ?? {}),
         }}
       >
         {card.description}
       </p>
 
-      <span
-        className="tracking-[0.1em] transition-colors duration-300"
-        style={{
-          fontFamily: "var(--font-body-family, Inter), sans-serif",
-          fontSize: "11px",
-          color: hovered ? "var(--site-secondary-light, #93c5fd)" : "var(--site-secondary, #2563eb)",
-        }}
-      >
-        Explore &rarr;
-      </span>
+      {cardLinkText && (
+        <span
+          className="tracking-[0.1em] transition-colors duration-300"
+          style={{
+            fontFamily: "var(--font-body-family, Inter), sans-serif",
+            fontSize: "11px",
+            color: hovered ? cardLinkHoverColor : cardLinkColor,
+          }}
+        >
+          {cardLinkText} &rarr;
+        </span>
+      )}
     </div>
   );
+
+  if (card.url) {
+    return (
+      <Link href={card.url} className="block">
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
 }

@@ -155,9 +155,16 @@ export const BLOCK_TYPES = {
     defaultProps: {
       tagline: "", taglineFont: "", heading: "", headingFont: "",
       subtitle: "", subtitleFont: "",
-      cards: [] as { name: string; description: string }[],
+      cards: [] as { name: string; description: string; url: string }[],
       backgroundColor: "#f8fafc", taglineColor: "",
       headingColor: "", subtitleColor: "",
+      cardBgColor: "", cardHoverBgColor: "",
+      cardNameColor: "", cardNameHoverColor: "",
+      cardDescColor: "", cardDescHoverColor: "",
+      cardIndexColor: "", cardIndexHoverColor: "",
+      cardSeparatorColor: "",
+      cardLinkColor: "", cardLinkHoverColor: "",
+      cardLinkText: "Explore",
     },
   },
   philosophy: {
