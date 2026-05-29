@@ -16,6 +16,7 @@ interface SidebarCounts {
   blogPostCount: number
   blogCategoryCount: number
   mediaCount: number
+  subscriberCount: number
 }
 
 const websiteNav: NavItem[] = [
@@ -23,6 +24,7 @@ const websiteNav: NavItem[] = [
   { href: "/admin/blog", label: "Blog Posts", countKey: "blogPostCount", showCountWhenZero: true },
   { href: "/admin/blog/categories", label: "Blog Categories", countKey: "blogCategoryCount", showCountWhenZero: true },
   { href: "/admin/media", label: "Media Library", countKey: "mediaCount", showCountWhenZero: true },
+  { href: "/admin/subscribers", label: "Subscribers", countKey: "subscriberCount", showCountWhenZero: true },
   { href: "/admin/nav", label: "Navigation" },
   { href: "/admin/footer", label: "Footer" },
   { href: "/admin/brand-palette", label: "Brand Palette" },

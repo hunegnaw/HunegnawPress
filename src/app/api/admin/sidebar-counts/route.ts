@@ -12,11 +12,13 @@ export async function GET() {
       blogPostCount,
       blogCategoryCount,
       mediaCount,
+      subscriberCount,
     ] = await Promise.all([
       prisma.page.count({ where: { deletedAt: null } }),
       prisma.blogPost.count({ where: { deletedAt: null } }),
       prisma.blogCategory.count({ where: { deletedAt: null } }),
       prisma.media.count({ where: { deletedAt: null } }),
+      prisma.newsletterSubscriber.count({ where: { unsubscribedAt: null } }),
     ]);
 
     return NextResponse.json({
@@ -24,6 +26,7 @@ export async function GET() {
       blogPostCount,
       blogCategoryCount,
       mediaCount,
+      subscriberCount,
     });
   } catch (error) {
     console.error("Error fetching sidebar counts:", error);
