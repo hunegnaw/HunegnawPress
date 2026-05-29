@@ -25,7 +25,7 @@ export function QuoteBlock({ props }: QuoteBlockProps) {
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-4xl"} px-6 md:px-16`}>
         <blockquote
           className="border-l pl-6"
-          style={{ borderColor: "rgba(37,99,235,0.3)" }}
+          style={{ borderColor: "rgb(var(--site-secondary-rgb, 37 99 235) / 0.3)" }}
         >
           <p
             className="leading-[1.3]"
@@ -44,7 +44,7 @@ export function QuoteBlock({ props }: QuoteBlockProps) {
             <footer className="mt-6 flex items-center gap-3">
               <span
                 className="inline-block h-px w-6"
-                style={{ backgroundColor: accentColor || "#2563eb" }}
+                style={{ backgroundColor: accentColor || "var(--site-secondary, #2563eb)" }}
               />
               <div>
                 {attribution && (

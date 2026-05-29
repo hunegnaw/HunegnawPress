@@ -204,7 +204,7 @@ export function FaqBlock({ props }: FaqBlockProps) {
                           fontSize: "14px",
                           fontWeight: 400,
                           letterSpacing: "0.05em",
-                          color: "#2563eb",
+                          color: "var(--site-secondary, #2563eb)",
                         }}
                       >
                         {ROMAN[si] ?? si + 1}
@@ -245,7 +245,7 @@ export function FaqBlock({ props }: FaqBlockProps) {
                         <span
                           className="ml-4 shrink-0 select-none transition-transform duration-300"
                           style={{
-                            color: "#2563eb",
+                            color: "var(--site-secondary, #2563eb)",
                             fontSize: "20px",
                             fontWeight: 300,
                             lineHeight: 1,

@@ -56,7 +56,7 @@ export function ContactFormBlock({ props }: ContactFormBlockProps) {
   const headingColor = (props.headingColor as string) || "";
   const descriptionColor = (props.descriptionColor as string) || "#64748b";
   const backgroundColor = (props.backgroundColor as string) || "#f8fafc";
-  const buttonColor = (props.buttonColor as string) || "#2563eb";
+  const buttonColor = (props.buttonColor as string) || "var(--site-secondary, #2563eb)";
   const buttonTextColor = (props.buttonTextColor as string) || "#ffffff";
   const maxWidth = (props.maxWidth as string) ?? "sm";
   const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
@@ -107,14 +107,14 @@ export function ContactFormBlock({ props }: ContactFormBlockProps) {
             {showAddress && org.address && <p>{org.address}</p>}
             {showEmail && org.email && (
               <p>
-                <a href={`mailto:${org.email}`} className="underline" style={{ color: "#2563eb" }}>
+                <a href={`mailto:${org.email}`} className="underline" style={{ color: "var(--site-secondary, #2563eb)" }}>
                   {org.email}
                 </a>
               </p>
             )}
             {showEmail && org.phone && (
               <p>
-                <a href={`tel:${org.phone}`} className="underline" style={{ color: "#2563eb" }}>
+                <a href={`tel:${org.phone}`} className="underline" style={{ color: "var(--site-secondary, #2563eb)" }}>
                   {org.phone}
                 </a>
               </p>
@@ -141,7 +141,7 @@ export function ContactFormBlock({ props }: ContactFormBlockProps) {
               name="name"
               type="text"
               required
-              className="w-full border bg-white px-4 py-2.5 text-slate-800 outline-none transition focus:border-blue-600"
+              className="w-full border bg-white px-4 py-2.5 text-slate-800 outline-none transition focus:border-[var(--site-secondary)]"
               style={{
                 fontFamily: "var(--font-body-family, Inter), sans-serif",
                 fontSize: "13px",
@@ -167,7 +167,7 @@ export function ContactFormBlock({ props }: ContactFormBlockProps) {
               name="email"
               type="email"
               required
-              className="w-full border bg-white px-4 py-2.5 text-slate-800 outline-none transition focus:border-blue-600"
+              className="w-full border bg-white px-4 py-2.5 text-slate-800 outline-none transition focus:border-[var(--site-secondary)]"
               style={{
                 fontFamily: "var(--font-body-family, Inter), sans-serif",
                 fontSize: "13px",
@@ -193,7 +193,7 @@ export function ContactFormBlock({ props }: ContactFormBlockProps) {
               name="message"
               rows={5}
               required
-              className="w-full border bg-white px-4 py-2.5 text-slate-800 outline-none transition focus:border-blue-600"
+              className="w-full border bg-white px-4 py-2.5 text-slate-800 outline-none transition focus:border-[var(--site-secondary)]"
               style={{
                 fontFamily: "var(--font-body-family, Inter), sans-serif",
                 fontSize: "13px",

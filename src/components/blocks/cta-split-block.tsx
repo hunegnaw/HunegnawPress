@@ -19,7 +19,7 @@ export function CtaSplitBlock({ props }: CtaSplitBlockProps) {
   const headingColor = (props.headingColor as string) || "";
   const descriptionColor = (props.descriptionColor as string) || "#64748b";
   const bulletColor = (props.bulletColor as string) || "#0f172a";
-  const ctaButtonColor = (props.ctaButtonColor as string) || "#2563eb";
+  const ctaButtonColor = (props.ctaButtonColor as string) || "var(--site-secondary, #2563eb)";
   const ctaButtonTextColor = (props.ctaButtonTextColor as string) || "#ffffff";
   const maxWidth = (props.maxWidth as string) ?? "xl";
   const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
@@ -45,7 +45,7 @@ export function CtaSplitBlock({ props }: CtaSplitBlockProps) {
               <div className="mb-4 flex items-center gap-3">
                 <span
                   className="inline-block h-px w-6"
-                  style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
+                  style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))" }}
                 />
                 <span
                   className="uppercase tracking-[0.18em]"
@@ -53,7 +53,7 @@ export function CtaSplitBlock({ props }: CtaSplitBlockProps) {
                     fontFamily: "var(--font-section-tag-family, Inter), sans-serif",
                     fontSize: "var(--font-section-tag-size, 10px)",
                     fontWeight: "var(--font-section-tag-weight, 400)" as unknown as number,
-                    color: taglineColor || "var(--font-section-tag-color, #2563eb)",
+                    color: taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))",
                     ...(taglineFont ?? {}),
                   }}
                 >
@@ -130,7 +130,7 @@ export function CtaSplitBlock({ props }: CtaSplitBlockProps) {
                   <div key={i} className="flex items-start gap-3.5">
                     <span
                       className="mt-1.5 h-1 w-1 shrink-0 rounded-full"
-                      style={{ backgroundColor: "#2563eb" }}
+                      style={{ backgroundColor: "var(--site-secondary, #2563eb)" }}
                     />
                     <span
                       className="leading-[1.6]"

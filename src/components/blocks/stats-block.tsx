@@ -14,7 +14,7 @@ export function StatsBlock({ props }: StatsBlockProps) {
   const stats = (props.stats as Stat[]) ?? [];
   const backgroundColor = (props.backgroundColor as string) ?? "#1e293b";
   const textColor = (props.textColor as string) || "#ffffff";
-  const statValueColor = (props.statValueColor as string) || "#93c5fd";
+  const statValueColor = (props.statValueColor as string) || "var(--site-secondary-light, #93c5fd)";
   const statLabelColor = (props.statLabelColor as string) || "#ffffff59";
   const maxWidth = (props.maxWidth as string) ?? "lg";
   const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };

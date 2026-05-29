@@ -12,7 +12,7 @@ export function CtaBannerBlock({ props }: CtaBannerBlockProps) {
   const backgroundColor = (props.backgroundColor as string) ?? "#1e293b";
   const headingColor = (props.headingColor as string) || "#ffffff";
   const textColor = (props.textColor as string) || "#ffffffaa";
-  const ctaButtonColor = (props.ctaButtonColor as string) || "#2563eb";
+  const ctaButtonColor = (props.ctaButtonColor as string) || "var(--site-secondary, #2563eb)";
   const ctaButtonTextColor = (props.ctaButtonTextColor as string) || "#ffffff";
   const maxWidth = (props.maxWidth as string) ?? "sm";
   const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };

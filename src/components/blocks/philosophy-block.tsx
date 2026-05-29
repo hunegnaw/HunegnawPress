@@ -17,7 +17,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
   const taglineAccentColor = (props.taglineAccentColor as string) || "";
   const quoteColor = (props.quoteColor as string) || "#ffffffe6";
   const attributionColor = (props.attributionColor as string) || "#ffffff4d";
-  const pillarNameColor = (props.pillarNameColor as string) || "#93c5fd";
+  const pillarNameColor = (props.pillarNameColor as string) || "var(--site-secondary-light, #93c5fd)";
   const pillarDescColor = (props.pillarDescColor as string) || "#ffffff66";
   const maxWidth = (props.maxWidth as string) ?? "xl";
   const MAX_WIDTH: Record<string, string> = { sm: "max-w-4xl", md: "max-w-5xl", lg: "max-w-6xl", xl: "max-w-7xl", full: "max-w-full" };
@@ -34,7 +34,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
       style={{
         backgroundColor,
         backgroundImage:
-          "radial-gradient(ellipse at 80% 20%, rgba(37,99,235,0.06) 0%, transparent 50%)",
+          "radial-gradient(ellipse at 80% 20%, rgb(var(--site-secondary-rgb, 37 99 235) / 0.06) 0%, transparent 50%)",
       }}
     >
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-7xl"} px-6 md:px-16`}>
@@ -44,7 +44,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
               <div className="mb-6 flex items-center gap-3">
                 <span
                   className="inline-block h-px w-6"
-                  style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
+                  style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))" }}
                 />
                 <span
                   className="uppercase tracking-[0.18em]"
@@ -52,7 +52,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
                     fontFamily: "var(--font-section-tag-family, Inter), sans-serif",
                     fontSize: "var(--font-section-tag-size, 10px)",
                     fontWeight: "var(--font-section-tag-weight, 400)" as unknown as number,
-                    color: taglineColor || "var(--font-section-tag-color, #2563eb)",
+                    color: taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))",
                     ...(taglineFont ?? {}),
                   }}
                 >
@@ -102,7 +102,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
                 <div
                   key={i}
                   className="border-l pl-5"
-                  style={{ borderColor: "rgba(37,99,235,0.3)" }}
+                  style={{ borderColor: "rgb(var(--site-secondary-rgb, 37 99 235) / 0.3)" }}
                 >
                   <h3
                     className="mb-1"

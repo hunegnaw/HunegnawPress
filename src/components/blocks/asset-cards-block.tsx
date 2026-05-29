@@ -49,7 +49,7 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
             <div className="mb-4 flex items-center gap-3">
               <span
                 className="inline-block h-px w-6"
-                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
+                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))" }}
               />
               <span
                 className="uppercase tracking-[0.18em]"
@@ -57,7 +57,7 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
                   fontFamily: "var(--font-section-tag-family, Inter), sans-serif",
                   fontSize: "var(--font-section-tag-size, 10px)",
                   fontWeight: "var(--font-section-tag-weight, 400)" as unknown as number,
-                  color: taglineColor || "var(--font-section-tag-color, #2563eb)",
+                  color: taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))",
                   ...(taglineFont ?? {}),
                 }}
               >
@@ -137,7 +137,7 @@ function AssetCard({
           fontFamily: "var(--font-section-heading-family, 'Inter'), sans-serif",
           fontSize: "72px",
           fontWeight: 300,
-          color: hovered ? "rgba(147,197,253,0.2)" : "rgba(15,23,42,0.06)",
+          color: hovered ? "rgb(var(--site-secondary-rgb, 147 197 253) / 0.2)" : "rgba(15,23,42,0.06)",
         }}
       >
         {String(index + 1).padStart(2, "0")}
@@ -145,7 +145,7 @@ function AssetCard({
 
       <div
         className="mb-5 h-px w-8"
-        style={{ backgroundColor: "#2563eb" }}
+        style={{ backgroundColor: "var(--site-secondary, #2563eb)" }}
       />
 
       <h3
@@ -154,7 +154,7 @@ function AssetCard({
           fontFamily: "var(--font-section-heading-family, 'Inter'), sans-serif",
           fontSize: "22px",
           fontWeight: 500,
-          color: hovered ? "#93c5fd" : (cardNameColor || "#1e293b"),
+          color: hovered ? "var(--site-secondary-light, #93c5fd)" : (cardNameColor || "#1e293b"),
           ...(cardNameFont ?? {}),
         }}
       >
@@ -179,7 +179,7 @@ function AssetCard({
         style={{
           fontFamily: "var(--font-body-family, Inter), sans-serif",
           fontSize: "11px",
-          color: hovered ? "#93c5fd" : "#2563eb",
+          color: hovered ? "var(--site-secondary-light, #93c5fd)" : "var(--site-secondary, #2563eb)",
         }}
       >
         Explore &rarr;

@@ -26,7 +26,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
   const taglineColor = (props.taglineColor as string) || "";
   const taglineAccentColor = (props.taglineAccentColor as string) || "";
   const sidebarTaglineColor = (props.sidebarTaglineColor as string) || "";
-  const sidebarStatColor = (props.sidebarStatColor as string) || "#93c5fd";
+  const sidebarStatColor = (props.sidebarStatColor as string) || "var(--site-secondary-light, #93c5fd)";
   const sidebarLabelColor = (props.sidebarLabelColor as string) || "";
   const sidebarQuoteColor = (props.sidebarQuoteColor as string) || "";
   const maxWidth = (props.maxWidth as string) ?? "xl";
@@ -49,7 +49,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
             <div className="mb-4 flex items-center gap-3">
               <span
                 className="inline-block h-px w-6"
-                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, #2563eb)" }}
+                style={{ backgroundColor: taglineAccentColor || taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))" }}
               />
               <span
                 className="uppercase tracking-[0.18em]"
@@ -57,7 +57,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
                   fontFamily: "var(--font-section-tag-family, Inter), sans-serif",
                   fontSize: "var(--font-section-tag-size, 10px)",
                   fontWeight: "var(--font-section-tag-weight, 400)" as unknown as number,
-                  color: taglineColor || "var(--font-section-tag-color, #2563eb)",
+                  color: taglineColor || "var(--font-section-tag-color, var(--site-secondary, #2563eb))",
                   ...(taglineFont ?? {}),
                 }}
               >
@@ -91,7 +91,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
                     fontFamily: "var(--font-section-heading-family, 'Inter'), sans-serif",
                     fontSize: "13px",
                     fontWeight: 400,
-                    color: "#2563eb",
+                    color: "var(--site-secondary, #2563eb)",
                   }}
                 >
                   {ROMAN_NUMERALS[i] ?? `${i + 1}`}.
@@ -135,7 +135,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
                     fontFamily: "var(--font-section-tag-family, Inter), sans-serif",
                     fontSize: "10px",
                     fontWeight: "var(--font-section-tag-weight, 400)" as unknown as number,
-                    color: sidebarTaglineColor || "#2563eb",
+                    color: sidebarTaglineColor || "var(--site-secondary, #2563eb)",
                     ...(sidebarTaglineFont ?? {}),
                   }}
                 >
@@ -178,7 +178,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
                     fontSize: "20px",
                     fontWeight: 300,
                     fontStyle: "italic",
-                    color: sidebarQuoteColor || "rgba(147,197,253,0.8)",
+                    color: sidebarQuoteColor || "rgb(var(--site-secondary-rgb, 147 197 253) / 0.8)",
                     ...(sidebarQuoteFont ?? {}),
                   }}
                 >

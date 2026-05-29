@@ -13,7 +13,7 @@ export function NewsletterSignupBlock({ props }: NewsletterSignupBlockProps) {
   const backgroundColor = (props.backgroundColor as string) ?? "#1e293b";
   const headingColor = (props.headingColor as string) || "#ffffff";
   const descriptionColor = (props.descriptionColor as string) || "#ffffff99";
-  const buttonColor = (props.buttonColor as string) || "#2563eb";
+  const buttonColor = (props.buttonColor as string) || "var(--site-secondary, #2563eb)";
   const buttonTextColor = (props.buttonTextColor as string) || "#ffffff";
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -94,7 +94,7 @@ export function NewsletterSignupBlock({ props }: NewsletterSignupBlockProps) {
             type="email"
             required
             placeholder="Enter your email"
-            className="w-full border bg-white/5 px-4 py-2.5 text-white placeholder:text-white/40 outline-none transition focus:border-blue-500 sm:max-w-sm"
+            className="w-full border bg-white/5 px-4 py-2.5 text-white placeholder:text-white/40 outline-none transition focus:border-[var(--site-secondary)] sm:max-w-sm"
             style={{
               fontFamily: "var(--font-body-family, Inter), sans-serif",
               fontSize: "12px",
@@ -122,7 +122,7 @@ export function NewsletterSignupBlock({ props }: NewsletterSignupBlockProps) {
             style={{
               fontFamily: "var(--font-body-family, Inter), sans-serif",
               fontSize: "12px",
-              color: "rgba(147,197,253,0.8)",
+              color: "rgb(var(--site-secondary-rgb, 147 197 253) / 0.8)",
             }}
           >
             Thank you! You have been subscribed.
