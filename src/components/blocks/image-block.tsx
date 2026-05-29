@@ -30,7 +30,7 @@ export function ImageBlock({ props }: ImageBlockProps) {
 
   return (
     <section className="py-12">
-      <div className={`mx-auto px-16 ${maxWidthClass}`}>
+      <div className={`mx-auto px-6 md:px-16 ${maxWidthClass}`}>
         <figure className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

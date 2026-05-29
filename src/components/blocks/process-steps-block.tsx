@@ -43,7 +43,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
 
   return (
     <section className="py-24 md:py-28" style={{ backgroundColor }}>
-      <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-7xl"} px-16`}>
+      <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-7xl"} px-6 md:px-16`}>
         <div className="mb-14">
           {tagline && (
             <div className="mb-4 flex items-center gap-3">

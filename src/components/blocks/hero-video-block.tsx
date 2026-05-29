@@ -110,7 +110,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
 
       {/* Content wrapper — grid when stats present */}
       <div
-        className="relative z-10 w-full px-16 pb-16 pt-40"
+        className="relative z-10 w-full px-6 md:px-16 pb-10 md:pb-16 pt-24 md:pt-40"
         style={hasStats ? {
           display: "grid",
           gridTemplateColumns: "1fr 360px",

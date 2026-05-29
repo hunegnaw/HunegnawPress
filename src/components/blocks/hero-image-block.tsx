@@ -102,7 +102,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
 
       {/* Content wrapper — grid when stats present */}
       <div
-        className="relative z-10 w-full h-full px-16"
+        className="relative z-10 w-full h-full px-6 md:px-16"
         style={hasStats ? {
           display: "grid",
           gridTemplateColumns: "1fr 360px",

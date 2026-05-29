@@ -37,7 +37,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
           "radial-gradient(ellipse at 80% 20%, rgba(37,99,235,0.06) 0%, transparent 50%)",
       }}
     >
-      <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-7xl"} px-16`}>
+      <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-7xl"} px-6 md:px-16`}>
         <div className="grid gap-16 lg:grid-cols-2 lg:gap-20">
           <div>
             {tagline && (
