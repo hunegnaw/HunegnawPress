@@ -4,10 +4,16 @@ import { BlogListing } from "@/components/marketing/blog-listing";
 
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Latest posts and updates.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const blogPage = await prisma.page.findFirst({
+    where: { isBlogPage: true, status: "PUBLISHED", deletedAt: null },
+    select: { metaTitle: true, metaDescription: true, title: true },
+  });
+  return {
+    ...(blogPage?.metaTitle ? { title: blogPage.metaTitle } : {}),
+    description: blogPage?.metaDescription || "",
+  };
+}
 
 export default async function BlogPage({
   searchParams,

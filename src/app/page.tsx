@@ -2,11 +2,29 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { BlockRenderer } from "@/components/blocks/block-renderer";
 import { MarketingHeader } from "@/components/marketing/header";
 import { MarketingFooter } from "@/components/marketing/footer";
 import { getOrganization } from "@/lib/organization";
 import { mergeTypography, type TypographySettings } from "@/lib/typography";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const homepage = await prisma.page.findFirst({
+    where: { isHomepage: true, status: "PUBLISHED", deletedAt: null },
+    select: { metaTitle: true, metaDescription: true, ogImageUrl: true, title: true },
+  });
+  if (!homepage) return {};
+  return {
+    ...(homepage.metaTitle ? { title: homepage.metaTitle } : {}),
+    description: homepage.metaDescription || "",
+    openGraph: {
+      title: homepage.metaTitle || homepage.title,
+      description: homepage.metaDescription || "",
+      images: homepage.ogImageUrl ? [{ url: homepage.ogImageUrl }] : undefined,
+    },
+  };
+}
 
 export default async function Home() {
   const session = await auth();

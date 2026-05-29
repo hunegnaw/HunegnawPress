@@ -15,9 +15,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     where: { slug, isPublished: true, deletedAt: null },
     select: { title: true, excerpt: true, metaTitle: true, metaDescription: true, ogImageUrl: true, heroImageUrl: true },
   });
-  if (!post) return { title: "Post Not Found" };
+  if (!post) return {};
   return {
-    title: post.metaTitle || post.title,
+    ...(post.metaTitle ? { title: post.metaTitle } : {}),
     description: post.metaDescription || post.excerpt || "",
     openGraph: {
       title: post.metaTitle || post.title,
