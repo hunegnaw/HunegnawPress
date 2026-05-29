@@ -192,9 +192,10 @@ export const BLOCK_TYPES = {
       sidebarStat: "", sidebarLabel: "", sidebarLabelFont: "",
       sidebarQuote: "", showDynamicStats: false,
       backgroundColor: "#ffffff", headingColor: "",
+      stepNumeralColor: "", stepDividerColor: "",
       stepNameColor: "#1e293b", stepNameFont: "",
       stepDescColor: "#64748b", stepDescFont: "",
-      sidebarBgColor: "#1e293b",
+      sidebarBgColor: "#1e293b", sidebarDividerColor: "",
     },
   },
   cta_split: {

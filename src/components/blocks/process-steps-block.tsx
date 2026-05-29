@@ -20,9 +20,12 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
 
   const backgroundColor = (props.backgroundColor as string) || "#ffffff";
   const headingColor = (props.headingColor as string) || "";
+  const stepNumeralColor = (props.stepNumeralColor as string) || "var(--site-secondary, #2563eb)";
+  const stepDividerColor = (props.stepDividerColor as string) || "rgba(15,23,42,0.1)";
   const stepNameColor = (props.stepNameColor as string) || "#1e293b";
   const stepDescColor = (props.stepDescColor as string) || "#64748b";
   const sidebarBgColor = (props.sidebarBgColor as string) || "#1e293b";
+  const sidebarDividerColor = (props.sidebarDividerColor as string) || "rgba(255,255,255,0.1)";
   const taglineColor = (props.taglineColor as string) || "";
   const taglineAccentColor = (props.taglineAccentColor as string) || "";
   const sidebarTaglineColor = (props.sidebarTaglineColor as string) || "";
@@ -83,7 +86,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
               <div
                 key={i}
                 className="flex gap-6 py-6 first:pt-0"
-                style={{ borderBottom: "0.5px solid rgba(15,23,42,0.1)" }}
+                style={{ borderBottom: `0.5px solid ${stepDividerColor}` }}
               >
                 <span
                   className="shrink-0 pt-0.5"
@@ -91,7 +94,7 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
                     fontFamily: "var(--font-section-heading-family, 'Inter'), sans-serif",
                     fontSize: "13px",
                     fontWeight: 400,
-                    color: "var(--site-secondary, #2563eb)",
+                    color: stepNumeralColor,
                   }}
                 >
                   {ROMAN_NUMERALS[i] ?? `${i + 1}`}.
@@ -172,8 +175,9 @@ export function ProcessStepsBlock({ props }: ProcessStepsBlockProps) {
               )}
               {sidebarQuote && (
                 <p
-                  className="mt-8 border-t border-white/10 pt-8 leading-[1.5]"
+                  className="mt-8 pt-8 leading-[1.5]"
                   style={{
+                    borderTop: `1px solid ${sidebarDividerColor}`,
                     fontFamily: "var(--font-hero-title-family, 'Inter'), sans-serif",
                     fontSize: "20px",
                     fontWeight: 300,

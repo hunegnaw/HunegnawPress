@@ -1442,10 +1442,12 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
           </div>
           <ColorField label="Heading Color" field="headingColor" {...fp} />
           <FontField label="Heading Font" field="headingFont" hint={fontHint(t.h2)} {...fp} />
+          <ColorField label="Roman Numeral Color" field="stepNumeralColor" {...fp} />
           <ColorField label="Step Name Color" field="stepNameColor" {...fp} />
           <FontField label="Step Name Font" field="stepNameFont" hint={fontHint(t.h3)} {...fp} />
           <ColorField label="Step Description Color" field="stepDescColor" {...fp} />
           <FontField label="Step Description Font" field="stepDescFont" hint={fontHint(t.body)} {...fp} />
+          <ColorField label="Step Divider Color" field="stepDividerColor" {...fp} />
           <ColorField label="Background Color" field="backgroundColor" {...fp} />
           <div>
             <label className="block text-xs font-medium text-gray-700 mb-2">
@@ -1489,7 +1491,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
             <button
               type="button"
               onClick={() => updateProp("steps", [...steps, { name: "", description: "" }])}
-              className="flex items-center gap-1 text-xs text-[#2563eb] hover:underline"
+              className="flex items-center gap-1 text-xs text-gray-500 hover:underline"
             >
               <Plus size={12} /> Add Step
             </button>
@@ -1511,6 +1513,7 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
               <FontField label="Sidebar Quote Font" field="sidebarQuoteFont" hint={fontHint(t.h3)} {...fp} />
               <CheckboxField label="Use Dynamic Stats (avg net return)" field="showDynamicStats" {...fp} />
               <ColorField label="Sidebar Background" field="sidebarBgColor" {...fp} />
+              <ColorField label="Sidebar Divider Color" field="sidebarDividerColor" {...fp} />
             </div>
           </div>
           <SelectField
