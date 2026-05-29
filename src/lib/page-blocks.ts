@@ -245,6 +245,66 @@ export const BLOCK_TYPES = {
       ctaButtonColor: "", ctaButtonTextColor: "#ffffff",
     },
   },
+  featured_posts: {
+    label: "Featured Posts",
+    icon: "Newspaper",
+    description: "Grid of recent or category blog posts",
+    defaultProps: {
+      tagline: "", taglineFont: "", heading: "", headingFont: "",
+      subtitle: "", subtitleFont: "",
+      categorySlug: "", limit: 3, columns: "3", maxWidth: "lg",
+      showImage: true, showExcerpt: true, showDate: true,
+      showReadTime: true, showCategory: true,
+      ctaText: "", ctaUrl: "/blog",
+      backgroundColor: "", taglineColor: "", headingColor: "#0f172a",
+      subtitleColor: "#64748b", cardBgColor: "#ffffff",
+      titleColor: "#1e293b", excerptColor: "#64748b",
+      metaColor: "#94a3b8", ctaColor: "",
+    },
+  },
+  team: {
+    label: "Team / Authors",
+    icon: "Users",
+    description: "Profile cards with photo, role, bio, and links",
+    defaultProps: {
+      tagline: "", taglineFont: "", heading: "", headingFont: "",
+      subtitle: "", subtitleFont: "",
+      members: [] as {
+        name: string; role: string; bio: string; imageUrl: string;
+        linkedin: string; twitter: string; email: string; url: string;
+      }[],
+      columns: "3", maxWidth: "lg", imageShape: "circle",
+      backgroundColor: "", taglineColor: "", headingColor: "#0f172a",
+      subtitleColor: "#64748b", cardBgColor: "",
+      nameColor: "#1e293b", nameFont: "", roleColor: "",
+      bioColor: "#64748b", socialColor: "#94a3b8",
+    },
+  },
+  accordion: {
+    label: "Accordion / Tabs",
+    icon: "ChevronDown",
+    description: "Expandable accordion or tabbed content",
+    defaultProps: {
+      heading: "", headingFont: "",
+      layout: "accordion",
+      items: [] as { title: string; content: string }[],
+      allowMultiple: false, maxWidth: "lg",
+      backgroundColor: "", headingColor: "#0f172a",
+      titleColor: "#1e293b", titleFont: "",
+      contentColor: "#64748b", borderColor: "#e2e8f0", activeColor: "",
+    },
+  },
+  announcement_bar: {
+    label: "Announcement Bar",
+    icon: "Megaphone",
+    description: "Dismissible banner for launches or sales",
+    defaultProps: {
+      text: "", textFont: "", emoji: "",
+      linkText: "", linkUrl: "",
+      dismissible: true, sticky: false, align: "center",
+      backgroundColor: "", textColor: "#ffffff", linkColor: "#ffffff",
+    },
+  },
 } as const;
 
 export type BlockType = keyof typeof BLOCK_TYPES;
@@ -259,4 +319,4 @@ export interface PageBlockData {
 
 export const NESTABLE_BLOCK_TYPES: BlockType[] = (
   Object.keys(BLOCK_TYPES) as BlockType[]
-).filter((t) => !["hero_video", "hero_image", "two_column"].includes(t));
+).filter((t) => !["hero_video", "hero_image", "two_column", "announcement_bar"].includes(t));

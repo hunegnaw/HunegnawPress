@@ -815,6 +815,299 @@ function CarouselEditor({
   );
 }
 
+// --- Team editor (extracted to avoid conditional hook calls) ---
+
+interface TeamMember {
+  name: string;
+  role: string;
+  bio: string;
+  imageUrl: string;
+  linkedin: string;
+  twitter: string;
+  email: string;
+  url: string;
+}
+
+function SortableTeamMember({
+  member,
+  index,
+  onUpdate,
+  onRemove,
+  onOpenMedia,
+}: {
+  member: TeamMember;
+  index: number;
+  onUpdate: (index: number, updated: TeamMember) => void;
+  onRemove: (index: number) => void;
+  onOpenMedia: (index: number) => void;
+}) {
+  const id = `member-${index}`;
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const set = (key: keyof TeamMember, value: string) =>
+    onUpdate(index, { ...member, [key]: value });
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-start gap-2 mb-2 p-2 border rounded">
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 mt-1 shrink-0"
+      >
+        <GripVertical size={14} />
+      </button>
+      {member.imageUrl && (
+        <div className="w-12 h-12 rounded-full bg-gray-100 overflow-hidden shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={member.imageUrl} alt="" className="w-full h-full object-cover" />
+        </div>
+      )}
+      <div className="flex-1 space-y-1">
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={member.imageUrl}
+            onChange={(e) => set("imageUrl", e.target.value)}
+            placeholder="Photo URL"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+          <button
+            type="button"
+            onClick={() => onOpenMedia(index)}
+            className="p-1 border rounded hover:bg-gray-50 shrink-0"
+          >
+            <ImageIcon size={14} />
+          </button>
+        </div>
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={member.name}
+            onChange={(e) => set("name", e.target.value)}
+            placeholder="Name"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+          <input
+            type="text"
+            value={member.role}
+            onChange={(e) => set("role", e.target.value)}
+            placeholder="Role"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+        </div>
+        <textarea
+          value={member.bio}
+          onChange={(e) => set("bio", e.target.value)}
+          placeholder="Short bio"
+          rows={2}
+          className="w-full px-2 py-1 text-xs border rounded"
+        />
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={member.linkedin}
+            onChange={(e) => set("linkedin", e.target.value)}
+            placeholder="LinkedIn URL"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+          <input
+            type="text"
+            value={member.twitter}
+            onChange={(e) => set("twitter", e.target.value)}
+            placeholder="X / Twitter URL"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+        </div>
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={member.email}
+            onChange={(e) => set("email", e.target.value)}
+            placeholder="Email"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+          <input
+            type="text"
+            value={member.url}
+            onChange={(e) => set("url", e.target.value)}
+            placeholder="Profile/page URL"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onRemove(index)}
+        className="p-1 text-red-500 hover:bg-red-50 rounded mt-1 shrink-0"
+      >
+        <Trash2 size={14} />
+      </button>
+    </div>
+  );
+}
+
+function TeamEditor({
+  props,
+  updateProp,
+}: {
+  props: Record<string, unknown>;
+  updateProp: (key: string, value: unknown) => void;
+}) {
+  const [mediaPicker, setMediaPicker] = useState<{
+    open: boolean;
+    field: string;
+    accept: "image" | "video" | "all";
+  }>({ open: false, field: "", accept: "image" });
+
+  const org = useOrganization();
+  const t = org.typography;
+
+  const members = (props.members as TeamMember[]) || [];
+  const memberIds = members.map((_, i) => `member-${i}`);
+  const fp = { props, updateProp };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = parseInt((active.id as string).split("-")[1]);
+    const newIndex = parseInt((over.id as string).split("-")[1]);
+    updateProp("members", arrayMove(members, oldIndex, newIndex));
+  };
+
+  const emptyMember: TeamMember = {
+    name: "", role: "", bio: "", imageUrl: "",
+    linkedin: "", twitter: "", email: "", url: "",
+  };
+
+  return (
+    <div className="space-y-4">
+      <InputField label="Tagline" field="tagline" {...fp} />
+      <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
+      <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+      <InputField label="Heading" field="heading" {...fp} />
+      <FontField label="Heading Font" field="headingFont" hint={fontHint(t.h2)} {...fp} />
+      <ColorField label="Heading Color" field="headingColor" {...fp} />
+      <InputField label="Subtitle" field="subtitle" {...fp} />
+      <FontField label="Subtitle Font" field="subtitleFont" hint={fontHint(t.body)} {...fp} />
+      <ColorField label="Subtitle Color" field="subtitleColor" {...fp} />
+
+      <SelectField
+        label="Columns"
+        field="columns"
+        options={[
+          { value: "2", label: "2 Columns" },
+          { value: "3", label: "3 Columns" },
+          { value: "4", label: "4 Columns" },
+        ]}
+        {...fp}
+      />
+      <SelectField
+        label="Photo Shape"
+        field="imageShape"
+        options={[
+          { value: "circle", label: "Circle" },
+          { value: "rounded", label: "Rounded" },
+          { value: "square", label: "Square" },
+        ]}
+        {...fp}
+      />
+      <SelectField
+        label="Max Width"
+        field="maxWidth"
+        options={[
+          { value: "sm", label: "Small" },
+          { value: "md", label: "Medium" },
+          { value: "lg", label: "Large" },
+          { value: "xl", label: "Extra Large" },
+          { value: "full", label: "Full Width" },
+        ]}
+        {...fp}
+      />
+      <ColorField label="Background Color" field="backgroundColor" {...fp} />
+      <ColorField label="Card Background Color" field="cardBgColor" {...fp} />
+      <ColorField label="Name Color" field="nameColor" {...fp} />
+      <FontField label="Name Font" field="nameFont" hint={fontHint(t.h4)} {...fp} />
+      <ColorField label="Role Color" field="roleColor" {...fp} />
+      <ColorField label="Bio Color" field="bioColor" {...fp} />
+      <ColorField label="Social Icon Color" field="socialColor" {...fp} />
+
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-2">
+          Members
+        </label>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={memberIds} strategy={verticalListSortingStrategy}>
+            {members.map((member, i) => (
+              <SortableTeamMember
+                key={`member-${i}`}
+                member={member}
+                index={i}
+                onUpdate={(idx, updated) => {
+                  const next = [...members];
+                  next[idx] = updated;
+                  updateProp("members", next);
+                }}
+                onRemove={(idx) => {
+                  updateProp("members", members.filter((_, j) => j !== idx));
+                }}
+                onOpenMedia={(idx) => {
+                  setMediaPicker({ open: true, field: `member_${idx}`, accept: "image" });
+                }}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+        <button
+          type="button"
+          onClick={() => updateProp("members", [...members, { ...emptyMember }])}
+          className="flex items-center gap-1 text-xs text-[#2563eb] hover:underline"
+        >
+          <Plus size={12} /> Add Member
+        </button>
+      </div>
+
+      <MediaPicker
+        open={mediaPicker.open}
+        onClose={() => setMediaPicker({ ...mediaPicker, open: false })}
+        onSelect={(m) => {
+          if (mediaPicker.field.startsWith("member_")) {
+            const idx = parseInt(mediaPicker.field.split("_")[1]);
+            const next = [...members];
+            next[idx] = { ...next[idx], imageUrl: m.filePath };
+            updateProp("members", next);
+          } else {
+            updateProp(mediaPicker.field, m.filePath);
+          }
+        }}
+        accept={mediaPicker.accept}
+      />
+    </div>
+  );
+}
+
 // --- Main component ---
 
 interface BlockEditorFormProps {
@@ -1159,6 +1452,174 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
 
     case "carousel":
       return <CarouselEditor props={props} updateProp={updateProp} />;
+
+    case "team":
+      return <TeamEditor props={props} updateProp={updateProp} />;
+
+    case "featured_posts":
+      return (
+        <div className="space-y-4">
+          <InputField label="Tagline" field="tagline" {...fp} />
+          <FontField label="Tagline Font" field="taglineFont" hint={fontHint(t.sectionTag)} {...fp} />
+          <ColorField label="Tagline Color" field="taglineColor" {...fp} />
+          <InputField label="Heading" field="heading" {...fp} />
+          <FontField label="Heading Font" field="headingFont" hint={fontHint(t.h2)} {...fp} />
+          <ColorField label="Heading Color" field="headingColor" {...fp} />
+          <InputField label="Subtitle" field="subtitle" {...fp} />
+          <FontField label="Subtitle Font" field="subtitleFont" hint={fontHint(t.body)} {...fp} />
+          <ColorField label="Subtitle Color" field="subtitleColor" {...fp} />
+          <InputField label="Category Slug (optional)" field="categorySlug" {...fp} />
+          <RangeField label="Number of Posts" field="limit" min={1} max={12} step={1} {...fp} />
+          <SelectField
+            label="Columns"
+            field="columns"
+            options={[
+              { value: "2", label: "2 Columns" },
+              { value: "3", label: "3 Columns" },
+              { value: "4", label: "4 Columns" },
+            ]}
+            {...fp}
+          />
+          <SelectField
+            label="Max Width"
+            field="maxWidth"
+            options={[
+              { value: "sm", label: "Small" },
+              { value: "md", label: "Medium" },
+              { value: "lg", label: "Large" },
+              { value: "xl", label: "Extra Large" },
+              { value: "full", label: "Full Width" },
+            ]}
+            {...fp}
+          />
+          <CheckboxField label="Show Image" field="showImage" {...fp} />
+          <CheckboxField label="Show Excerpt" field="showExcerpt" {...fp} />
+          <CheckboxField label="Show Date" field="showDate" {...fp} />
+          <CheckboxField label="Show Read Time" field="showReadTime" {...fp} />
+          <CheckboxField label="Show Category" field="showCategory" {...fp} />
+          <ColorField label="Background Color" field="backgroundColor" {...fp} />
+          <ColorField label="Card Background Color" field="cardBgColor" {...fp} />
+          <ColorField label="Title Color" field="titleColor" {...fp} />
+          <ColorField label="Excerpt Color" field="excerptColor" {...fp} />
+          <ColorField label="Meta Color" field="metaColor" {...fp} />
+          <InputField label="View All Link Text (optional)" field="ctaText" {...fp} />
+          <InputField label="View All Link URL" field="ctaUrl" {...fp} />
+          <ColorField label="View All Link Color" field="ctaColor" {...fp} />
+        </div>
+      );
+
+    case "accordion": {
+      const items = (props.items as { title: string; content: string }[]) || [];
+      return (
+        <div className="space-y-4">
+          <InputField label="Heading" field="heading" {...fp} />
+          <FontField label="Heading Font" field="headingFont" hint={fontHint(t.h2)} {...fp} />
+          <ColorField label="Heading Color" field="headingColor" {...fp} />
+          <SelectField
+            label="Layout"
+            field="layout"
+            options={[
+              { value: "accordion", label: "Accordion" },
+              { value: "tabs", label: "Tabs" },
+            ]}
+            {...fp}
+          />
+          <CheckboxField label="Allow Multiple Open (accordion)" field="allowMultiple" {...fp} />
+          <SelectField
+            label="Max Width"
+            field="maxWidth"
+            options={[
+              { value: "sm", label: "Small" },
+              { value: "md", label: "Medium" },
+              { value: "lg", label: "Large" },
+              { value: "xl", label: "Extra Large" },
+              { value: "full", label: "Full Width" },
+            ]}
+            {...fp}
+          />
+          <ColorField label="Background Color" field="backgroundColor" {...fp} />
+          <ColorField label="Title Color" field="titleColor" {...fp} />
+          <FontField label="Title Font" field="titleFont" hint={fontHint(t.h4)} {...fp} />
+          <ColorField label="Content Color" field="contentColor" {...fp} />
+          <ColorField label="Border Color" field="borderColor" {...fp} />
+          <ColorField label="Active / Open Color" field="activeColor" {...fp} />
+          <div>
+            <label className="block text-xs font-medium text-gray-700 mb-2">
+              Items
+            </label>
+            {items.map((item, i) => (
+              <div key={i} className="mb-3 p-2 border rounded space-y-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={item.title}
+                    onChange={(e) => {
+                      const next = [...items];
+                      next[i] = { ...next[i], title: e.target.value };
+                      updateProp("items", next);
+                    }}
+                    placeholder="Title"
+                    className="flex-1 px-2 py-1 text-xs border rounded"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateProp("items", items.filter((_, j) => j !== i))
+                    }
+                    className="p-1 text-red-500 hover:bg-red-50 rounded shrink-0"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+                <RichTextEditor
+                  content={item.content || ""}
+                  onChange={(html) => {
+                    const next = [...items];
+                    next[i] = { ...next[i], content: html };
+                    updateProp("items", next);
+                  }}
+                />
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() =>
+                updateProp("items", [...items, { title: "", content: "" }])
+              }
+              className="flex items-center gap-1 text-xs text-[#2563eb] hover:underline"
+            >
+              <Plus size={12} /> Add Item
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    case "announcement_bar":
+      return (
+        <div className="space-y-4">
+          <InputField label="Text" field="text" {...fp} />
+          <FontField label="Text Font" field="textFont" hint={fontHint(t.body)} {...fp} />
+          <InputField label="Emoji / Icon (optional)" field="emoji" {...fp} />
+          <InputField label="Link Text (optional)" field="linkText" {...fp} />
+          <InputField label="Link URL" field="linkUrl" {...fp} />
+          <SelectField
+            label="Alignment"
+            field="align"
+            options={[
+              { value: "left", label: "Left" },
+              { value: "center", label: "Center" },
+              { value: "right", label: "Right" },
+            ]}
+            {...fp}
+          />
+          <CheckboxField label="Dismissible" field="dismissible" {...fp} />
+          <CheckboxField label="Sticky (stays at top on scroll)" field="sticky" {...fp} />
+          <ColorField label="Background Color" field="backgroundColor" {...fp} />
+          <ColorField label="Text Color" field="textColor" {...fp} />
+          <ColorField label="Link Color" field="linkColor" {...fp} />
+        </div>
+      );
 
     case "stats": {
       const stats = (props.stats as { value: string; label: string }[]) || [];

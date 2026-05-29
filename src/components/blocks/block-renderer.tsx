@@ -17,11 +17,16 @@ import { ProcessStepsBlock } from "./process-steps-block";
 import { CtaSplitBlock } from "./cta-split-block";
 import { FaqBlock } from "./faq-block";
 import { CarouselBlock } from "./carousel-block";
+import { FeaturedPostsBlock } from "./featured-posts-block";
+import { TeamBlock } from "./team-block";
+import { AccordionBlock } from "./accordion-block";
+import { AnnouncementBarBlock } from "./announcement-bar-block";
 
-export const BLOCK_MAP: Record<
-  string,
-  React.ComponentType<{ props: Record<string, unknown> }>
-> = {
+type BlockComponent = (props: {
+  props: Record<string, unknown>;
+}) => React.ReactNode | Promise<React.ReactNode>;
+
+export const BLOCK_MAP: Record<string, BlockComponent> = {
   hero_video: HeroVideoBlock,
   hero_image: HeroImageBlock,
   text_section: TextSectionBlock,
@@ -41,6 +46,10 @@ export const BLOCK_MAP: Record<
   cta_split: CtaSplitBlock,
   faq: FaqBlock,
   carousel: CarouselBlock,
+  featured_posts: FeaturedPostsBlock,
+  team: TeamBlock,
+  accordion: AccordionBlock,
+  announcement_bar: AnnouncementBarBlock,
 };
 
 interface Block {

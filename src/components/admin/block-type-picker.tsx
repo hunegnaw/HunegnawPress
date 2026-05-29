@@ -17,6 +17,9 @@ import {
   Minus,
   ListOrdered,
   GalleryHorizontal,
+  Users,
+  ChevronDown,
+  HelpCircle,
   X,
 } from "lucide-react";
 
@@ -36,6 +39,9 @@ const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
   Minus,
   ListOrdered,
   GalleryHorizontal,
+  Users,
+  ChevronDown,
+  HelpCircle,
 };
 
 interface BlockTypePickerProps {
