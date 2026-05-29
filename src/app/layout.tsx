@@ -17,11 +17,15 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const org = await getOrganization();
-  return {
-    title: org?.name || "My Website",
-    description: org?.legalName ? `${org.name} — ${org.legalName}` : org?.name || "My Website",
-  };
+  try {
+    const org = await getOrganization();
+    return {
+      title: org?.name || "My Website",
+      description: org?.legalName ? `${org.name} — ${org.legalName}` : org?.name || "My Website",
+    };
+  } catch {
+    return { title: "My Website" };
+  }
 }
 
 export default function RootLayout({
