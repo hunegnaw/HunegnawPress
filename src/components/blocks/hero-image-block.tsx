@@ -176,7 +176,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
           {ctaText && ctaUrl && (
             <a
               href={ctaUrl}
-              className="mt-10 inline-block px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.12em] transition hover:brightness-110"
+              className="mt-10 w-fit px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.12em] transition hover:brightness-110"
               style={{
                 fontFamily: "var(--font-body-family, Inter), sans-serif",
                 backgroundColor: ctaButtonColor,

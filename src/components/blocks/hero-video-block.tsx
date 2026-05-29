@@ -184,7 +184,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
               {ctaText && ctaUrl && (
                 <a
                   href={ctaUrl}
-                  className="inline-block px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.12em] transition hover:brightness-110"
+                  className="w-fit px-8 py-3.5 text-[11px] font-medium uppercase tracking-[0.12em] transition hover:brightness-110"
                   style={{
                     fontFamily: "var(--font-body-family, Inter), sans-serif",
                     backgroundColor: ctaButtonColor,
@@ -199,7 +199,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
               {ctaText2 && ctaUrl2 && (
                 <a
                   href={ctaUrl2}
-                  className="cta2-hero-video inline-block px-8 py-3.5 text-[11px] font-normal uppercase tracking-[0.12em] transition"
+                  className="cta2-hero-video w-fit px-8 py-3.5 text-[11px] font-normal uppercase tracking-[0.12em] transition"
                   style={{
                     fontFamily: "var(--font-body-family, Inter), sans-serif",
                     border: `0.5px solid ${cta2BorderColor || "rgb(var(--site-secondary-rgb, 147 197 253) / 0.4)"}`,
