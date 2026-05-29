@@ -228,6 +228,23 @@ export const BLOCK_TYPES = {
       backgroundColor: "#f8fafc", maxWidth: "xl",
     },
   },
+  carousel: {
+    label: "Carousel",
+    icon: "GalleryHorizontal",
+    description: "Image slideshow with captions and autoplay",
+    defaultProps: {
+      slides: [] as {
+        imageUrl: string; alt: string; heading: string;
+        subheading: string; ctaText: string; ctaUrl: string;
+      }[],
+      autoplay: true, interval: 5000, showArrows: true, showDots: true,
+      loop: true, rounded: true, aspectRatio: "16/9", maxWidth: "lg",
+      overlayOpacity: 0.3, backgroundColor: "", textColor: "#ffffff",
+      arrowColor: "#ffffff", dotColor: "#ffffff",
+      headingFont: "", subheadingFont: "",
+      ctaButtonColor: "", ctaButtonTextColor: "#ffffff",
+    },
+  },
 } as const;
 
 export type BlockType = keyof typeof BLOCK_TYPES;

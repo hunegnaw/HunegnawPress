@@ -16,6 +16,7 @@ import {
   Play,
   Minus,
   ListOrdered,
+  GalleryHorizontal,
   X,
 } from "lucide-react";
 
@@ -34,6 +35,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ size?: number }>> = {
   Play,
   Minus,
   ListOrdered,
+  GalleryHorizontal,
 };
 
 interface BlockTypePickerProps {

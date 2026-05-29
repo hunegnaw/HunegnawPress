@@ -553,6 +553,268 @@ function LogoGalleryEditor({
   );
 }
 
+// --- Carousel editor (extracted to avoid conditional hook calls) ---
+
+interface CarouselSlide {
+  imageUrl: string;
+  alt: string;
+  heading: string;
+  subheading: string;
+  ctaText: string;
+  ctaUrl: string;
+}
+
+function SortableCarouselSlide({
+  slide,
+  index,
+  onUpdate,
+  onRemove,
+  onOpenMedia,
+}: {
+  slide: CarouselSlide;
+  index: number;
+  onUpdate: (index: number, updated: CarouselSlide) => void;
+  onRemove: (index: number) => void;
+  onOpenMedia: (index: number) => void;
+}) {
+  const id = `slide-${index}`;
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-start gap-2 mb-2 p-2 border rounded">
+      <button
+        type="button"
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing p-1 text-gray-400 hover:text-gray-600 mt-1 shrink-0"
+      >
+        <GripVertical size={14} />
+      </button>
+      {slide.imageUrl && (
+        <div className="w-12 h-12 rounded bg-gray-100 overflow-hidden shrink-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={slide.imageUrl} alt="" className="w-full h-full object-cover" />
+        </div>
+      )}
+      <div className="flex-1 space-y-1">
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={slide.imageUrl}
+            onChange={(e) => onUpdate(index, { ...slide, imageUrl: e.target.value })}
+            placeholder="Image URL"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+          <button
+            type="button"
+            onClick={() => onOpenMedia(index)}
+            className="p-1 border rounded hover:bg-gray-50 shrink-0"
+          >
+            <ImageIcon size={14} />
+          </button>
+        </div>
+        <input
+          type="text"
+          value={slide.alt}
+          onChange={(e) => onUpdate(index, { ...slide, alt: e.target.value })}
+          placeholder="Alt text"
+          className="w-full px-2 py-1 text-xs border rounded"
+        />
+        <input
+          type="text"
+          value={slide.heading}
+          onChange={(e) => onUpdate(index, { ...slide, heading: e.target.value })}
+          placeholder="Heading (optional)"
+          className="w-full px-2 py-1 text-xs border rounded"
+        />
+        <input
+          type="text"
+          value={slide.subheading}
+          onChange={(e) => onUpdate(index, { ...slide, subheading: e.target.value })}
+          placeholder="Subheading (optional)"
+          className="w-full px-2 py-1 text-xs border rounded"
+        />
+        <div className="flex items-center gap-1">
+          <input
+            type="text"
+            value={slide.ctaText}
+            onChange={(e) => onUpdate(index, { ...slide, ctaText: e.target.value })}
+            placeholder="Button text"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+          <input
+            type="text"
+            value={slide.ctaUrl}
+            onChange={(e) => onUpdate(index, { ...slide, ctaUrl: e.target.value })}
+            placeholder="Link URL"
+            className="flex-1 px-2 py-1 text-xs border rounded"
+          />
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onRemove(index)}
+        className="p-1 text-red-500 hover:bg-red-50 rounded mt-1 shrink-0"
+      >
+        <Trash2 size={14} />
+      </button>
+    </div>
+  );
+}
+
+function CarouselEditor({
+  props,
+  updateProp,
+}: {
+  props: Record<string, unknown>;
+  updateProp: (key: string, value: unknown) => void;
+}) {
+  const [mediaPicker, setMediaPicker] = useState<{
+    open: boolean;
+    field: string;
+    accept: "image" | "video" | "all";
+  }>({ open: false, field: "", accept: "image" });
+
+  const org = useOrganization();
+  const t = org.typography;
+
+  const slides = (props.slides as CarouselSlide[]) || [];
+  const slideIds = slides.map((_, i) => `slide-${i}`);
+  const fp = { props, updateProp };
+
+  const slideSensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleSlideDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = parseInt((active.id as string).split("-")[1]);
+    const newIndex = parseInt((over.id as string).split("-")[1]);
+    updateProp("slides", arrayMove(slides, oldIndex, newIndex));
+  };
+
+  const emptySlide: CarouselSlide = {
+    imageUrl: "", alt: "", heading: "", subheading: "", ctaText: "", ctaUrl: "",
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-xs font-medium text-gray-700 mb-2">
+          Slides
+        </label>
+        <DndContext
+          sensors={slideSensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleSlideDragEnd}
+        >
+          <SortableContext items={slideIds} strategy={verticalListSortingStrategy}>
+            {slides.map((slide, i) => (
+              <SortableCarouselSlide
+                key={`slide-${i}`}
+                slide={slide}
+                index={i}
+                onUpdate={(idx, updated) => {
+                  const newSlides = [...slides];
+                  newSlides[idx] = updated;
+                  updateProp("slides", newSlides);
+                }}
+                onRemove={(idx) => {
+                  updateProp("slides", slides.filter((_, j) => j !== idx));
+                }}
+                onOpenMedia={(idx) => {
+                  setMediaPicker({ open: true, field: `slide_${idx}`, accept: "image" });
+                }}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+        <button
+          type="button"
+          onClick={() => updateProp("slides", [...slides, { ...emptySlide }])}
+          className="flex items-center gap-1 text-xs text-[#2563eb] hover:underline"
+        >
+          <Plus size={12} /> Add Slide
+        </button>
+      </div>
+
+      <div className="pt-2 border-t space-y-3">
+        <CheckboxField label="Autoplay" field="autoplay" {...fp} />
+        <RangeField label="Autoplay Interval (ms)" field="interval" min={2000} max={10000} step={500} {...fp} />
+        <CheckboxField label="Loop" field="loop" {...fp} />
+        <CheckboxField label="Show Arrows" field="showArrows" {...fp} />
+        <CheckboxField label="Show Dots" field="showDots" {...fp} />
+        <CheckboxField label="Rounded Corners" field="rounded" {...fp} />
+      </div>
+
+      <SelectField
+        label="Aspect Ratio"
+        field="aspectRatio"
+        options={[
+          { value: "16/9", label: "16:9 (Widescreen)" },
+          { value: "21/9", label: "21:9 (Ultrawide)" },
+          { value: "4/3", label: "4:3 (Standard)" },
+          { value: "3/2", label: "3:2" },
+          { value: "1/1", label: "1:1 (Square)" },
+        ]}
+        {...fp}
+      />
+      <SelectField
+        label="Max Width"
+        field="maxWidth"
+        options={[
+          { value: "sm", label: "Small" },
+          { value: "md", label: "Medium" },
+          { value: "lg", label: "Large" },
+          { value: "xl", label: "Extra Large" },
+          { value: "full", label: "Full Width" },
+        ]}
+        {...fp}
+      />
+      <RangeField label="Overlay Opacity" field="overlayOpacity" min={0} max={1} step={0.05} {...fp} />
+      <ColorField label="Background Color" field="backgroundColor" {...fp} />
+      <ColorField label="Text Color" field="textColor" {...fp} />
+      <FontField label="Heading Font" field="headingFont" hint={fontHint(t.h2)} {...fp} />
+      <FontField label="Subheading Font" field="subheadingFont" hint={fontHint(t.body)} {...fp} />
+      <ColorField label="CTA Button Color" field="ctaButtonColor" {...fp} />
+      <ColorField label="CTA Button Text Color" field="ctaButtonTextColor" {...fp} />
+      <ColorField label="Arrow Color" field="arrowColor" {...fp} />
+      <ColorField label="Dot Color" field="dotColor" {...fp} />
+
+      <MediaPicker
+        open={mediaPicker.open}
+        onClose={() => setMediaPicker({ ...mediaPicker, open: false })}
+        onSelect={(m) => {
+          if (mediaPicker.field.startsWith("slide_")) {
+            const idx = parseInt(mediaPicker.field.split("_")[1]);
+            const updated = [...slides];
+            updated[idx] = { ...updated[idx], imageUrl: m.filePath };
+            updateProp("slides", updated);
+          } else {
+            updateProp(mediaPicker.field, m.filePath);
+          }
+        }}
+        accept={mediaPicker.accept}
+      />
+    </div>
+  );
+}
+
 // --- Main component ---
 
 interface BlockEditorFormProps {
@@ -894,6 +1156,9 @@ export function BlockEditorForm({ type, props, onChange }: BlockEditorFormProps)
 
     case "logo_gallery":
       return <LogoGalleryEditor props={props} updateProp={updateProp} />;
+
+    case "carousel":
+      return <CarouselEditor props={props} updateProp={updateProp} />;
 
     case "stats": {
       const stats = (props.stats as { value: string; label: string }[]) || [];

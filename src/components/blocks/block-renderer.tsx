@@ -16,6 +16,7 @@ import { PhilosophyBlock } from "./philosophy-block";
 import { ProcessStepsBlock } from "./process-steps-block";
 import { CtaSplitBlock } from "./cta-split-block";
 import { FaqBlock } from "./faq-block";
+import { CarouselBlock } from "./carousel-block";
 
 export const BLOCK_MAP: Record<
   string,
@@ -39,6 +40,7 @@ export const BLOCK_MAP: Record<
   process_steps: ProcessStepsBlock,
   cta_split: CtaSplitBlock,
   faq: FaqBlock,
+  carousel: CarouselBlock,
 };
 
 interface Block {
