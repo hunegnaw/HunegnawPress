@@ -380,120 +380,124 @@ export default function AdminEditPagePage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Hero Image</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {featuredImageUrl ? (
-                  <div className="relative rounded-lg overflow-hidden border">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={featuredImageUrl}
-                      alt="Hero preview"
-                      className="w-full h-40 object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setFeaturedImageUrl("")}
-                      className="absolute top-2 right-2 p-1 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => { setMediaPickerTarget("hero"); setMediaPickerOpen(true) }}
-                    className="w-full h-32 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-blue-600 hover:text-blue-600 transition-colors"
-                  >
-                    <ImageIcon className="h-8 w-8" />
-                    <span className="text-sm">Choose image</span>
-                  </button>
-                )}
-              </CardContent>
-            </Card>
+            {!isHomepage && (
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Hero Image</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {featuredImageUrl ? (
+                      <div className="relative rounded-lg overflow-hidden border">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={featuredImageUrl}
+                          alt="Hero preview"
+                          className="w-full h-40 object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setFeaturedImageUrl("")}
+                          className="absolute top-2 right-2 p-1 rounded-full bg-black/50 text-white hover:bg-black/70 transition-colors"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => { setMediaPickerTarget("hero"); setMediaPickerOpen(true) }}
+                        className="w-full h-32 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-blue-600 hover:text-blue-600 transition-colors"
+                      >
+                        <ImageIcon className="h-8 w-8" />
+                        <span className="text-sm">Choose image</span>
+                      </button>
+                    )}
+                  </CardContent>
+                </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Hero Content</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-xs text-muted-foreground">
-                  Tagline, subtitle, and description shown in the page hero section (non-homepage pages only).
-                </p>
-                <div className="space-y-2">
-                  <Label htmlFor="heroTagline">Tagline</Label>
-                  <Input
-                    id="heroTagline"
-                    value={heroTagline}
-                    onChange={(e) => setHeroTagline(e.target.value)}
-                    placeholder="e.g. FREQUENTLY ASKED QUESTIONS"
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Uppercase label above the heading with an accent dash.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="heroHeading">Heading</Label>
-                  <Input
-                    id="heroHeading"
-                    value={heroHeading}
-                    onChange={(e) => setHeroHeading(e.target.value)}
-                    placeholder="e.g. Everything you want to know."
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Large white heading. If empty, the page title is used. Supports HTML.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="heroSubtitle">Subtitle</Label>
-                  <Input
-                    id="heroSubtitle"
-                    value={heroSubtitle}
-                    onChange={(e) => setHeroSubtitle(e.target.value)}
-                    placeholder="e.g. No fluff."
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Accent italic text at the same size as the heading. Supports HTML.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="heroDescription">Description</Label>
-                  <Textarea
-                    id="heroDescription"
-                    value={heroDescription}
-                    onChange={(e) => setHeroDescription(e.target.value)}
-                    placeholder="e.g. Straight answers about who we are..."
-                    rows={3}
-                  />
-                  <p className="text-[11px] text-muted-foreground">
-                    Smaller italic text below the heading. Supports HTML.
-                  </p>
-                </div>
-                <hr className="border-border" />
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="heroShowGrid"
-                    checked={heroShowGrid}
-                    onCheckedChange={(checked) => setHeroShowGrid(checked === true)}
-                  />
-                  <Label htmlFor="heroShowGrid" className="cursor-pointer">
-                    Show grid pattern
-                  </Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="heroShowDivider"
-                    checked={heroShowDivider}
-                    onCheckedChange={(checked) => setHeroShowDivider(checked === true)}
-                  />
-                  <Label htmlFor="heroShowDivider" className="cursor-pointer">
-                    Show bottom divider
-                  </Label>
-                </div>
-              </CardContent>
-            </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Hero Content</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-xs text-muted-foreground">
+                      Tagline, subtitle, and description shown in the page hero section.
+                    </p>
+                    <div className="space-y-2">
+                      <Label htmlFor="heroTagline">Tagline</Label>
+                      <Input
+                        id="heroTagline"
+                        value={heroTagline}
+                        onChange={(e) => setHeroTagline(e.target.value)}
+                        placeholder="e.g. FREQUENTLY ASKED QUESTIONS"
+                      />
+                      <p className="text-[11px] text-muted-foreground">
+                        Uppercase label above the heading with an accent dash.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="heroHeading">Heading</Label>
+                      <Input
+                        id="heroHeading"
+                        value={heroHeading}
+                        onChange={(e) => setHeroHeading(e.target.value)}
+                        placeholder="e.g. Everything you want to know."
+                      />
+                      <p className="text-[11px] text-muted-foreground">
+                        Large white heading. If empty, the page title is used. Supports HTML.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="heroSubtitle">Subtitle</Label>
+                      <Input
+                        id="heroSubtitle"
+                        value={heroSubtitle}
+                        onChange={(e) => setHeroSubtitle(e.target.value)}
+                        placeholder="e.g. No fluff."
+                      />
+                      <p className="text-[11px] text-muted-foreground">
+                        Accent italic text at the same size as the heading. Supports HTML.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="heroDescription">Description</Label>
+                      <Textarea
+                        id="heroDescription"
+                        value={heroDescription}
+                        onChange={(e) => setHeroDescription(e.target.value)}
+                        placeholder="e.g. Straight answers about who we are..."
+                        rows={3}
+                      />
+                      <p className="text-[11px] text-muted-foreground">
+                        Smaller italic text below the heading. Supports HTML.
+                      </p>
+                    </div>
+                    <hr className="border-border" />
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="heroShowGrid"
+                        checked={heroShowGrid}
+                        onCheckedChange={(checked) => setHeroShowGrid(checked === true)}
+                      />
+                      <Label htmlFor="heroShowGrid" className="cursor-pointer">
+                        Show grid pattern
+                      </Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id="heroShowDivider"
+                        checked={heroShowDivider}
+                        onCheckedChange={(checked) => setHeroShowDivider(checked === true)}
+                      />
+                      <Label htmlFor="heroShowDivider" className="cursor-pointer">
+                        Show bottom divider
+                      </Label>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
 
             <Card>
               <CardHeader>
