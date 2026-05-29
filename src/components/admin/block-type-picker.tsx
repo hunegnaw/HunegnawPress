@@ -64,9 +64,9 @@ export function BlockTypePicker({
   ).filter(([type]) => !allowedTypes || allowedTypes.includes(type));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl">
-        <div className="flex items-center justify-between px-6 py-4 border-b">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+        <div className="flex items-center justify-between px-6 py-4 border-b shrink-0">
           <h2 className="text-lg font-semibold">Add Block</h2>
           <button
             onClick={onClose}
@@ -75,7 +75,7 @@ export function BlockTypePicker({
             <X size={20} />
           </button>
         </div>
-        <div className="grid grid-cols-3 gap-3 p-6">
+        <div className="grid grid-cols-3 gap-3 p-6 overflow-y-auto">
           {entries.map(
             ([type, config]) => {
               const Icon = ICON_MAP[config.icon] || Type;
