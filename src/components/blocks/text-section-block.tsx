@@ -28,6 +28,7 @@ export function TextSectionBlock({ props }: TextSectionBlockProps) {
   const paddingY = (props.paddingY as string) ?? "md";
   const backgroundColor = (props.backgroundColor as string) ?? undefined;
   const textColor = (props.textColor as string) ?? undefined;
+  const nested = props.nested === true;
 
   const contentFont = resolveBlockFont((props.contentFont as string) || "");
 
@@ -36,10 +37,12 @@ export function TextSectionBlock({ props }: TextSectionBlockProps) {
 
   return (
     <section
-      className={paddingYClass}
+      className={nested ? "" : paddingYClass}
       style={{ backgroundColor, color: textColor }}
     >
-      <div className={`mx-auto px-6 md:px-16 ${maxWidthClass}`}>
+      <div
+        className={nested ? "w-full" : `mx-auto px-6 md:px-16 ${maxWidthClass}`}
+      >
         <div
           className="prose prose-lg max-w-none"
           style={{
