@@ -10,6 +10,7 @@ export function ImageBlock({ props }: ImageBlockProps) {
   const caption = (props.caption as string) ?? "";
   const captionColor = (props.captionColor as string) || "#6b7280";
   const maxWidth = (props.maxWidth as string) ?? "md";
+  const nested = props.nested === true;
 
   const maxWidthMap: Record<string, string> = {
     sm: "max-w-4xl",
@@ -29,8 +30,10 @@ export function ImageBlock({ props }: ImageBlockProps) {
   if (!src) return null;
 
   return (
-    <section className="py-12">
-      <div className={`mx-auto px-6 md:px-16 ${maxWidthClass}`}>
+    <section className={nested ? "" : "py-12"}>
+      <div
+        className={nested ? "w-full" : `mx-auto px-6 md:px-16 ${maxWidthClass}`}
+      >
         <figure className="text-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

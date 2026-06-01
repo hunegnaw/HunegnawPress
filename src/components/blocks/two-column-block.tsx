@@ -23,7 +23,12 @@ function renderColumn(
           .map((block) => {
             const Component = BLOCK_MAP[block.type];
             if (!Component) return null;
-            return <Component key={block.id} props={block.props} />;
+            return (
+              <Component
+                key={block.id}
+                props={{ ...block.props, nested: true }}
+              />
+            );
           })}
       </>
     );
