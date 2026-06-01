@@ -212,12 +212,22 @@ body {
   --tw-prose-headings: inherit;
 }
 
-/* Reset prose heading overrides so typography settings win */
+/* Reset prose heading overrides so typography settings win.
+   Tailwind Typography's prose-lg gives headings very large em-scaled
+   margins and line-height (~123px top / 70px bottom on an h2); override
+   them with tighter, proportional spacing. */
 .marketing-typography .prose :is(h1, h2, h3, h4, h5, h6) {
   font-size: unset !important;
   font-weight: unset !important;
   font-style: unset !important;
   font-family: unset !important;
+  line-height: 1.15;
+  margin-top: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+.marketing-typography .prose :is(h1, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0;
 }
 
 .marketing-typography .prose h1 {
