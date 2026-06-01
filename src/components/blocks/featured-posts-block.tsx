@@ -1,3 +1,4 @@
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { resolveBlockFont } from "@/lib/block-fonts";
@@ -96,7 +97,7 @@ export async function FeaturedPostsBlock({ props }: FeaturedPostsBlockProps) {
 
   return (
     <section
-      className="py-16"
+      className={SECTION_PADDING_Y}
       style={backgroundColor ? { backgroundColor } : undefined}
     >
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-6xl"} px-6 md:px-16`}>

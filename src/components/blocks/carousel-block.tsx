@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { resolveBlockFont } from "@/lib/block-fonts";
 
 interface CarouselBlockProps {
@@ -81,7 +82,7 @@ export function CarouselBlock({ props }: CarouselBlockProps) {
 
   return (
     <section
-      className="py-12"
+      className={SECTION_PADDING_Y}
       style={backgroundColor ? { backgroundColor } : undefined}
     >
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-6xl"} px-6 md:px-16`}>

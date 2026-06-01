@@ -1,6 +1,7 @@
 "use client";
 
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 
 interface PhilosophyBlockProps {
   props: Record<string, unknown>;
@@ -30,7 +31,7 @@ export function PhilosophyBlock({ props }: PhilosophyBlockProps) {
 
   return (
     <section
-      className="relative overflow-hidden py-24 md:py-32"
+      className={`relative overflow-hidden ${SECTION_PADDING_Y}`}
       style={{
         backgroundColor,
         backgroundImage:

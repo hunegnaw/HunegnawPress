@@ -1,5 +1,6 @@
 "use client";
 
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { useState } from "react";
 import { resolveBlockFont } from "@/lib/block-fonts";
 
@@ -57,7 +58,7 @@ export function AccordionBlock({ props }: AccordionBlockProps) {
 
   return (
     <section
-      className="py-16"
+      className={SECTION_PADDING_Y}
       style={backgroundColor ? { backgroundColor } : undefined}
     >
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-4xl"} px-6 md:px-16`}>
