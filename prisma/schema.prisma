@@ -207,6 +207,7 @@ model Media {
   height     Int?
   alt        String?
   caption    String?   @db.Text
+  variants   Json?
   uploadedBy String
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

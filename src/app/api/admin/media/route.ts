@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { saveMediaFile } from "@/lib/media-upload";
+import { variantsForPrisma } from "@/lib/image-variants";
 import { createAuditLog } from "@/lib/audit";
 
 export async function GET(request: NextRequest) {
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
         mimeType: result.mimeType,
         width: result.width,
         height: result.height,
+        variants: variantsForPrisma(result.variants),
         uploadedBy: admin.id,
       },
     });

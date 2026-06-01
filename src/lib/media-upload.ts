@@ -1,6 +1,10 @@
 import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
+import {
+  generateImageVariants,
+  type MediaVariants,
+} from "@/lib/image-variants";
 
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
@@ -26,6 +30,7 @@ export interface MediaUploadResult {
   mimeType: string;
   width: number | null;
   height: number | null;
+  variants: MediaVariants | null;
 }
 
 function getAllowedTypes() {
@@ -90,6 +95,15 @@ export async function saveMediaFile(file: File): Promise<MediaUploadResult> {
 
   const publicPath = `/uploads/media/${year}/${storedFileName}`;
 
+  // Generate responsive WebP variants (color + B&W). Best effort — never fail
+  // the upload over variant generation.
+  let variants: MediaVariants | null = null;
+  try {
+    variants = await generateImageVariants(buffer, publicPath, file.type);
+  } catch (error) {
+    console.error("Variant generation failed:", error);
+  }
+
   return {
     filePath: publicPath,
     fileName: file.name,
@@ -97,6 +111,7 @@ export async function saveMediaFile(file: File): Promise<MediaUploadResult> {
     mimeType: file.type,
     width,
     height,
+    variants,
   };
 }
 

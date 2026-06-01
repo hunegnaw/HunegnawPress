@@ -20,7 +20,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
+  Layers,
+  RefreshCw,
 } from "lucide-react"
+import type { MediaVariants } from "@/lib/image-variants"
 
 interface MediaItem {
   id: string
@@ -32,6 +35,7 @@ interface MediaItem {
   width: number | null
   height: number | null
   fileSize: number
+  variants: MediaVariants | null
   createdAt: string
 }
 
@@ -47,6 +51,60 @@ function isImage(mimeType: string): boolean {
 
 function isVideo(mimeType: string): boolean {
   return mimeType.startsWith("video/")
+}
+
+function VariantRow({
+  label,
+  sublabel,
+  path,
+  width,
+  height,
+  size,
+}: {
+  label: string
+  sublabel: string
+  path: string
+  width: number | null
+  height: number | null
+  size: number
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3 px-3 py-2">
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">{label}</span>
+          <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">
+            {sublabel}
+          </span>
+        </div>
+        <p className="text-xs text-muted-foreground truncate">
+          {width && height ? `${width} x ${height} - ` : ""}
+          {path}
+        </p>
+      </div>
+      <div className="flex items-center gap-3 shrink-0">
+        <span className="text-xs font-medium tabular-nums">
+          {formatFileSize(size)}
+        </span>
+        <button
+          type="button"
+          onClick={() => navigator.clipboard?.writeText(path)}
+          className="text-xs text-muted-foreground hover:text-foreground"
+          title="Copy path"
+        >
+          Copy
+        </button>
+        <a
+          href={path}
+          target="_blank"
+          rel="noreferrer"
+          className="text-xs text-blue-600 hover:underline"
+        >
+          Open
+        </a>
+      </div>
+    </div>
+  )
 }
 
 export default function AdminMediaPage() {
@@ -70,6 +128,12 @@ export default function AdminMediaPage() {
   const [editCaption, setEditCaption] = useState("")
   const [savingMeta, setSavingMeta] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
+
+  // Variant generation state
+  const [generatingAll, setGeneratingAll] = useState(false)
+  const [genRemaining, setGenRemaining] = useState<number | null>(null)
+  const [pendingCount, setPendingCount] = useState<number | null>(null)
+  const [generatingItem, setGeneratingItem] = useState(false)
 
   const fetchMedia = useCallback(async () => {
     setLoading(true)
@@ -210,6 +274,73 @@ export default function AdminMediaPage() {
     }
   }
 
+  const fetchPendingCount = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/media/variants")
+      if (!res.ok) return
+      const data = await res.json()
+      setPendingCount(data.pending ?? 0)
+    } catch {
+      // Non-critical
+    }
+  }, [])
+
+  useEffect(() => {
+    Promise.resolve().then(() => fetchPendingCount())
+  }, [fetchPendingCount])
+
+  async function generateAllVariants() {
+    if (generatingAll) return
+    setGeneratingAll(true)
+    setError(null)
+    try {
+      // Loop the batch endpoint until nothing remains.
+      // Safety cap prevents an infinite loop if a file repeatedly fails.
+      for (let i = 0; i < 500; i++) {
+        const res = await fetch("/api/admin/media/variants", { method: "POST" })
+        if (!res.ok) throw new Error("Failed to generate variants")
+        const data = await res.json()
+        setGenRemaining(data.remaining)
+        if (data.remaining <= 0 || data.processed === 0) break
+      }
+      await fetchMedia()
+      await fetchPendingCount()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate variants")
+    } finally {
+      setGeneratingAll(false)
+      setGenRemaining(null)
+    }
+  }
+
+  async function generateItemVariants(itemId: string) {
+    setGeneratingItem(true)
+    setError(null)
+    try {
+      const res = await fetch(`/api/admin/media/${itemId}/variants`, {
+        method: "POST",
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "Failed to generate variants")
+      }
+      const data = await res.json()
+      setItems((prev) =>
+        prev.map((item) =>
+          item.id === itemId ? { ...item, variants: data.variants } : item
+        )
+      )
+      setSelectedItem((prev) =>
+        prev && prev.id === itemId ? { ...prev, variants: data.variants } : prev
+      )
+      fetchPendingCount()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate variants")
+    } finally {
+      setGeneratingItem(false)
+    }
+  }
+
   const totalPages = Math.ceil(total / pageSize)
 
   return (
@@ -221,13 +352,34 @@ export default function AdminMediaPage() {
             Upload and manage images and videos for your pages.
           </p>
         </div>
-        <Button
-          onClick={() => setShowUpload(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          <Upload className="h-4 w-4" />
-          Upload
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={generateAllVariants}
+            disabled={generatingAll || pendingCount === 0}
+            variant="outline"
+            title="Generate WebP + B&W sizes for images that don't have them yet"
+          >
+            {generatingAll ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Layers className="h-4 w-4" />
+            )}
+            {generatingAll
+              ? genRemaining != null
+                ? `Generating... ${genRemaining} left`
+                : "Generating..."
+              : pendingCount && pendingCount > 0
+                ? `Generate Variants (${pendingCount})`
+                : "Generate Variants"}
+          </Button>
+          <Button
+            onClick={() => setShowUpload(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Upload className="h-4 w-4" />
+            Upload
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -483,6 +635,87 @@ export default function AdminMediaPage() {
                   <p className="font-medium">{formatDate(selectedItem.createdAt)}</p>
                 </div>
               </div>
+
+              {/* Sizes & Variants */}
+              {isImage(selectedItem.mimeType) && (
+                <div className="space-y-3 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold">Sizes &amp; Variants</h3>
+                    {selectedItem.mimeType !== "image/svg+xml" &&
+                      selectedItem.mimeType !== "image/gif" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => generateItemVariants(selectedItem.id)}
+                          disabled={generatingItem}
+                        >
+                          {generatingItem ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <RefreshCw className="h-4 w-4" />
+                          )}
+                          {selectedItem.variants ? "Regenerate" : "Generate"}
+                        </Button>
+                      )}
+                  </div>
+
+                  <div className="rounded-lg border divide-y text-sm">
+                    {/* Original */}
+                    <VariantRow
+                      label="Original"
+                      sublabel={selectedItem.mimeType.replace("image/", "").toUpperCase()}
+                      path={selectedItem.filePath}
+                      width={selectedItem.width}
+                      height={selectedItem.height}
+                      size={selectedItem.fileSize}
+                    />
+
+                    {selectedItem.variants?.full && (
+                      <VariantRow
+                        label="Full WebP"
+                        sublabel="color"
+                        path={selectedItem.variants.full.path}
+                        width={selectedItem.variants.full.width}
+                        height={selectedItem.variants.full.height}
+                        size={selectedItem.variants.full.size}
+                      />
+                    )}
+
+                    {selectedItem.variants?.color.map((v) => (
+                      <VariantRow
+                        key={`c-${v.path}`}
+                        label={`${v.width}w`}
+                        sublabel="color"
+                        path={v.path}
+                        width={v.width}
+                        height={v.height}
+                        size={v.size}
+                      />
+                    ))}
+
+                    {selectedItem.variants?.bw.map((v) => (
+                      <VariantRow
+                        key={`bw-${v.path}`}
+                        label={`${v.width}w`}
+                        sublabel="B&W"
+                        path={v.path}
+                        width={v.width}
+                        height={v.height}
+                        size={v.size}
+                      />
+                    ))}
+                  </div>
+
+                  {!selectedItem.variants &&
+                    selectedItem.mimeType !== "image/svg+xml" &&
+                    selectedItem.mimeType !== "image/gif" && (
+                      <p className="text-xs text-muted-foreground">
+                        No responsive variants yet. Click Generate to create WebP
+                        and black &amp; white sizes.
+                      </p>
+                    )}
+                </div>
+              )}
 
               {/* Editable fields */}
               <div className="space-y-3">
