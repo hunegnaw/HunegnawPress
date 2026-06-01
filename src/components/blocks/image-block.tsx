@@ -1,4 +1,5 @@
 import { resolveBlockFont } from "@/lib/block-fonts";
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 
 interface ImageBlockProps {
   props: Record<string, unknown>;
@@ -30,7 +31,7 @@ export function ImageBlock({ props }: ImageBlockProps) {
   if (!src) return null;
 
   return (
-    <section className={nested ? "" : "py-12"}>
+    <section className={nested ? "" : SECTION_PADDING_Y}>
       <div
         className={nested ? "w-full" : `mx-auto px-6 md:px-16 ${maxWidthClass}`}
       >

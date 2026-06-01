@@ -1,5 +1,6 @@
 "use client";
 
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { useState, type FormEvent } from "react";
 import { useOrganization } from "@/components/providers/organization-provider";
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
@@ -66,7 +67,7 @@ export function ContactFormBlock({ props }: ContactFormBlockProps) {
   const buttonFont = resolveBlockFont((props.buttonFont as string) || "");
 
   return (
-    <section className="py-24" style={{ backgroundColor }}>
+    <section className={SECTION_PADDING_Y} style={{ backgroundColor }}>
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-4xl"} px-6 md:px-16`}>
         {heading && (
           <h2

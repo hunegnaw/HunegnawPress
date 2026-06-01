@@ -1,3 +1,4 @@
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
 
 interface Stat {
@@ -24,7 +25,7 @@ export function StatsBlock({ props }: StatsBlockProps) {
   const statLabelFont = resolveBlockFont((props.statLabelFont as string) || "");
 
   return (
-    <section className="py-24" style={{ backgroundColor }}>
+    <section className={SECTION_PADDING_Y} style={{ backgroundColor }}>
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-6xl"} px-6 md:px-16`}>
         {heading && (
           <h2

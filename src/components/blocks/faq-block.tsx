@@ -1,5 +1,6 @@
 "use client";
 
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
 
@@ -108,7 +109,7 @@ export function FaqBlock({ props }: FaqBlockProps) {
   };
 
   return (
-    <section className="py-24 md:py-28" style={{ backgroundColor }}>
+    <section className={SECTION_PADDING_Y} style={{ backgroundColor }}>
       <div
         className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-7xl"} px-6 md:px-16`}
       >

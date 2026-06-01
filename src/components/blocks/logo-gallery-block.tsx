@@ -1,3 +1,4 @@
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { resolveBlockFontVars } from "@/lib/block-fonts";
 
 interface Logo {
@@ -33,7 +34,7 @@ export function LogoGalleryBlock({ props }: LogoGalleryBlockProps) {
   const headingFont = resolveBlockFontVars((props.headingFont as string) || "", "h2");
 
   return (
-    <section className="py-20" style={{ backgroundColor }}>
+    <section className={SECTION_PADDING_Y} style={{ backgroundColor }}>
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-6xl"} px-6 md:px-16`}>
         {heading && (
           <h2

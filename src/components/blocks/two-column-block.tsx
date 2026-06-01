@@ -1,3 +1,4 @@
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { BLOCK_MAP } from "./block-renderer";
 import type { SubBlockData } from "@/lib/page-blocks";
 
@@ -59,7 +60,7 @@ export function TwoColumnBlock({ props }: TwoColumnBlockProps) {
   const widths = LEFT_WIDTH_MAP[leftWidth] ?? LEFT_WIDTH_MAP["1/2"];
 
   return (
-    <section className="py-16" style={backgroundColor ? { backgroundColor } : undefined}>
+    <section className={SECTION_PADDING_Y} style={backgroundColor ? { backgroundColor } : undefined}>
       <div className={`mx-auto grid ${MAX_WIDTH[maxWidth] ?? "max-w-6xl"} grid-cols-1 gap-12 px-6 md:px-16 md:grid-cols-12`}>
         <div className={`${widths.left}`}>
           {renderColumn(leftBlocks, leftContent)}

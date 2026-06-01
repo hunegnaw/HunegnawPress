@@ -1,5 +1,6 @@
 "use client";
 
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { useState } from "react";
 import Link from "next/link";
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
@@ -55,7 +56,7 @@ export function AssetCardsBlock({ props }: AssetCardsBlockProps) {
   const cardDescFont = resolveBlockFont((props.cardDescFont as string) || "");
 
   return (
-    <section style={{ backgroundColor }} className="py-24 md:py-28">
+    <section style={{ backgroundColor }} className={SECTION_PADDING_Y}>
       <div className={`mx-auto ${maxWidthClass[maxWidth] ?? "max-w-7xl"} px-6 md:px-16`}>
         <div className="mb-14">
           {tagline && (

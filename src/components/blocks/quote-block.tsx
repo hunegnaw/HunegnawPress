@@ -1,3 +1,4 @@
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { resolveBlockFont } from "@/lib/block-fonts";
 
 interface QuoteBlockProps {
@@ -21,7 +22,7 @@ export function QuoteBlock({ props }: QuoteBlockProps) {
   const roleFont = resolveBlockFont((props.roleFont as string) || "");
 
   return (
-    <section className="py-20" style={{ backgroundColor }}>
+    <section className={SECTION_PADDING_Y} style={{ backgroundColor }}>
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-4xl"} px-6 md:px-16`}>
         <blockquote
           className="border-l pl-6"

@@ -1,5 +1,6 @@
 "use client";
 
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 import { resolveBlockFont, resolveBlockFontVars } from "@/lib/block-fonts";
 
 interface CtaSplitBlockProps {
@@ -37,7 +38,7 @@ export function CtaSplitBlock({ props }: CtaSplitBlockProps) {
   const cta2ButtonFont = resolveBlockFont((props.cta2ButtonFont as string) || "");
 
   return (
-    <section style={{ backgroundColor }} className="py-24 md:py-28">
+    <section style={{ backgroundColor }} className={SECTION_PADDING_Y}>
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-7xl"} px-6 md:px-16`}>
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 lg:items-center">
           <div>

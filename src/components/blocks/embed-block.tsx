@@ -1,3 +1,4 @@
+import { SECTION_PADDING_Y } from "@/lib/block-spacing";
 interface EmbedBlockProps {
   props: Record<string, unknown>;
 }
@@ -30,7 +31,7 @@ export function EmbedBlock({ props }: EmbedBlockProps) {
   const embedUrl = toEmbedUrl(url);
 
   return (
-    <section className="py-12">
+    <section className={SECTION_PADDING_Y}>
       <div className={`mx-auto ${MAX_WIDTH[maxWidth] ?? "max-w-4xl"} px-6 md:px-16`}>
         <div
           className="relative w-full overflow-hidden rounded-lg"
