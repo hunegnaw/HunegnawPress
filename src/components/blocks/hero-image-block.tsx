@@ -100,16 +100,14 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
         />
       )}
 
-      {/* Content wrapper — grid when stats present */}
+      {/* Content wrapper — two-column grid (text + stats) on desktop only.
+          On mobile/tablet it stacks so the text spans the full screen width. */}
       <div
-        className="relative z-10 w-full h-full px-6 md:px-16"
-        style={hasStats ? {
-          display: "grid",
-          gridTemplateColumns: "1fr 360px",
-          alignItems: "end",
-          paddingBottom: "4rem",
-          paddingTop: "10rem",
-        } : undefined}
+        className={`relative z-10 w-full h-full px-6 md:px-16 ${
+          hasStats
+            ? "pt-40 pb-16 lg:grid lg:grid-cols-[1fr_360px] lg:items-end"
+            : ""
+        }`}
       >
         {/* Main content */}
         <div
@@ -271,7 +269,7 @@ export function HeroImageBlock({ props }: HeroImageBlockProps) {
       {/* Responsive: hide stats card on mobile */}
       {hasStats && (
         <style>{`
-          @media (max-width: 960px) {
+          @media (max-width: 1023px) {
             .hero-stats-card { display: none !important; }
             .relative.z-10.w-full.h-full {
               display: flex !important;

@@ -108,15 +108,14 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
         style={{ opacity: overlayOpacity }}
       />
 
-      {/* Content wrapper — grid when stats present */}
+      {/* Content wrapper — two-column grid (text + stats) on desktop only.
+          On mobile it stacks so the text spans the full screen width. */}
       <div
-        className="relative z-10 w-full px-6 md:px-16 pb-10 md:pb-16 pt-24 md:pt-40"
-        style={hasStats ? {
-          display: "grid",
-          gridTemplateColumns: "1fr 360px",
-          alignItems: "end",
-          gap: "2rem",
-        } : undefined}
+        className={`relative z-10 w-full px-6 md:px-16 pb-10 md:pb-16 pt-24 md:pt-40 ${
+          hasStats
+            ? "lg:grid lg:grid-cols-[1fr_360px] lg:items-end lg:gap-8"
+            : ""
+        }`}
       >
         <div className={hasStats ? "" : "max-w-[900px]"}>
           {/* Tagline */}
@@ -301,7 +300,7 @@ export function HeroVideoBlock({ props }: HeroVideoBlockProps) {
       `}</style>
       {hasStats && (
         <style>{`
-          @media (max-width: 960px) {
+          @media (max-width: 1023px) {
             .hero-stats-card { display: none !important; }
           }
         `}</style>
