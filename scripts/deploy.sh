@@ -294,12 +294,16 @@ APP_PORT="${11}"
 # Add pm2 to PATH (installed at /home/master/.npm-global/bin)
 export PATH="/home/master/bin/npm/lib/node_modules/bin:/home/master/.npm-global/bin:$PATH"
 
-# Cloudways app-user home dir is root-owned, so npm/prisma can't write their
-# default caches under $HOME. Redirect caches to the writable shared dir.
-export npm_config_cache="$SHARED_DIR/.npm"
-export XDG_CACHE_HOME="$SHARED_DIR/.cache"
-export PM2_HOME="$SHARED_DIR/.pm2"
-mkdir -p "$npm_config_cache" "$XDG_CACHE_HOME" "$PM2_HOME"
+# When deploying as an unprivileged app user, the Cloudways home dir is
+# root-owned, so npm/prisma/pm2 can't write their default state under $HOME.
+# Redirect those to the writable shared dir. Only do this when $HOME isn't
+# writable, so master-user deploys keep their default (shared) PM2 daemon.
+if [ ! -w "$HOME" ]; then
+    export npm_config_cache="$SHARED_DIR/.npm"
+    export XDG_CACHE_HOME="$SHARED_DIR/.cache"
+    export PM2_HOME="$SHARED_DIR/.pm2"
+    mkdir -p "$npm_config_cache" "$XDG_CACHE_HOME" "$PM2_HOME"
+fi
 
 # Ensure a modern Node. The project (Next 16 / Prisma 7) needs Node >= 20, but
 # some servers only have the system Node. If it's too old, download a pinned
