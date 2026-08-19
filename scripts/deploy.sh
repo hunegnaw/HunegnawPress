@@ -298,7 +298,8 @@ export PATH="/home/master/bin/npm/lib/node_modules/bin:/home/master/.npm-global/
 # default caches under $HOME. Redirect caches to the writable shared dir.
 export npm_config_cache="$SHARED_DIR/.npm"
 export XDG_CACHE_HOME="$SHARED_DIR/.cache"
-mkdir -p "$npm_config_cache" "$XDG_CACHE_HOME"
+export PM2_HOME="$SHARED_DIR/.pm2"
+mkdir -p "$npm_config_cache" "$XDG_CACHE_HOME" "$PM2_HOME"
 
 # Ensure a modern Node. The project (Next 16 / Prisma 7) needs Node >= 20, but
 # some servers only have the system Node. If it's too old, download a pinned
