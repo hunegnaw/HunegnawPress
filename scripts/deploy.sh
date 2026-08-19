@@ -294,6 +294,35 @@ APP_PORT="${11}"
 # Add pm2 to PATH (installed at /home/master/.npm-global/bin)
 export PATH="/home/master/bin/npm/lib/node_modules/bin:/home/master/.npm-global/bin:$PATH"
 
+# Cloudways app-user home dir is root-owned, so npm/prisma can't write their
+# default caches under $HOME. Redirect caches to the writable shared dir.
+export npm_config_cache="$SHARED_DIR/.npm"
+export XDG_CACHE_HOME="$SHARED_DIR/.cache"
+mkdir -p "$npm_config_cache" "$XDG_CACHE_HOME"
+
+# Ensure a modern Node. The project (Next 16 / Prisma 7) needs Node >= 20, but
+# some servers only have the system Node. If it's too old, download a pinned
+# Node into the writable shared dir and put it first on PATH (no sudo needed).
+NODE_MIN_MAJOR=20
+NODE_PINNED="v22.14.0"
+CUR_NODE_MAJOR=$(node -v 2>/dev/null | sed 's/^v\([0-9]*\).*/\1/')
+if [ -z "$CUR_NODE_MAJOR" ] || [ "$CUR_NODE_MAJOR" -lt "$NODE_MIN_MAJOR" ]; then
+    case "$(uname -m)" in
+        x86_64) NODE_ARCH="x64" ;;
+        aarch64|arm64) NODE_ARCH="arm64" ;;
+        *) NODE_ARCH="x64" ;;
+    esac
+    NODE_DIR="$SHARED_DIR/node-$NODE_PINNED-linux-$NODE_ARCH"
+    if [ ! -x "$NODE_DIR/bin/node" ]; then
+        echo "System Node ($(node -v 2>/dev/null || echo none)) too old; installing $NODE_PINNED..."
+        curl -fsSL "https://nodejs.org/dist/$NODE_PINNED/node-$NODE_PINNED-linux-$NODE_ARCH.tar.xz" -o "/tmp/node-$NODE_PINNED.tar.xz"
+        tar -xJf "/tmp/node-$NODE_PINNED.tar.xz" -C "$SHARED_DIR"
+        rm -f "/tmp/node-$NODE_PINNED.tar.xz"
+    fi
+    export PATH="$NODE_DIR/bin:$PATH"
+    echo "Using Node $(node -v) at $(command -v node)"
+fi
+
 # Update current symlink
 ln -sfn "$DEPLOY_DIR" "$CURRENT_LINK"
 echo "Symlink: $CURRENT_LINK -> $DEPLOY_DIR"
