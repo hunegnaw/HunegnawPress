@@ -305,28 +305,48 @@ if [ ! -w "$HOME" ]; then
     mkdir -p "$npm_config_cache" "$XDG_CACHE_HOME" "$PM2_HOME"
 fi
 
-# Ensure a modern Node. The project (Next 16 / Prisma 7) needs Node >= 20, but
-# some servers only have the system Node. If it's too old, download a pinned
-# Node into the writable shared dir and put it first on PATH (no sudo needed).
-NODE_MIN_MAJOR=20
-NODE_PINNED="v22.14.0"
-CUR_NODE_MAJOR=$(node -v 2>/dev/null | sed 's/^v\([0-9]*\).*/\1/')
-if [ -z "$CUR_NODE_MAJOR" ] || [ "$CUR_NODE_MAJOR" -lt "$NODE_MIN_MAJOR" ]; then
-    case "$(uname -m)" in
-        x86_64) NODE_ARCH="x64" ;;
-        aarch64|arm64) NODE_ARCH="arm64" ;;
-        *) NODE_ARCH="x64" ;;
-    esac
-    NODE_DIR="$SHARED_DIR/node-$NODE_PINNED-linux-$NODE_ARCH"
-    if [ ! -x "$NODE_DIR/bin/node" ]; then
-        echo "System Node ($(node -v 2>/dev/null || echo none)) too old; installing $NODE_PINNED..."
-        curl -fsSL "https://nodejs.org/dist/$NODE_PINNED/node-$NODE_PINNED-linux-$NODE_ARCH.tar.xz" -o "/tmp/node-$NODE_PINNED.tar.xz"
-        tar -xJf "/tmp/node-$NODE_PINNED.tar.xz" -C "$SHARED_DIR"
-        rm -f "/tmp/node-$NODE_PINNED.tar.xz"
-    fi
-    export PATH="$NODE_DIR/bin:$PATH"
-    echo "Using Node $(node -v) at $(command -v node)"
+# --- Run on a security-patched Node 22 LTS (shared /home/master/runtimes) ---
+RUNTIMES_DIR="/home/master/runtimes"
+NODE_MIN_PATCHED="22.23.4"
+ver_ge() { [ "$1" = "$2" ] && return 0; [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | tail -n1)" = "$1" ]; }
+ensure_patched_node() {
+    mkdir -p "$RUNTIMES_DIR"
+    local shas file ver dir tmp
+    shas="$(curl -fsSL https://nodejs.org/dist/latest-v22.x/SHASUMS256.txt 2>/dev/null)" || { echo "WARN: could not reach nodejs.org to resolve latest Node 22." >&2; return 1; }
+    file="$(printf '%s\n' "$shas" | grep -oE 'node-v22\.[0-9]+\.[0-9]+-linux-x64\.tar\.xz' | head -n1)"
+    ver="$(printf '%s' "$file" | sed -E 's/^node-(v22\.[0-9]+\.[0-9]+)-.*/\1/')"
+    [ -n "$file" ] && [ -n "$ver" ] || { echo "WARN: could not parse latest Node 22 filename." >&2; return 1; }
+    ver_ge "${ver#v}" "$NODE_MIN_PATCHED" || { echo "WARN: latest Node 22 ($ver) below floor $NODE_MIN_PATCHED." >&2; return 1; }
+    dir="$RUNTIMES_DIR/node-$ver-linux-x64"
+    [ -x "$dir/bin/node" ] && { echo "$dir/bin"; return 0; }
+    echo "Installing patched Node $ver into $RUNTIMES_DIR ..." >&2
+    tmp="$(mktemp -d)"
+    ( cd "$tmp" || exit 1
+      curl -fsSLO "https://nodejs.org/dist/$ver/$file" || exit 1
+      printf '%s\n' "$shas" | grep " $file\$" | sha256sum -c - >/dev/null 2>&1 || exit 1
+      tar -xJf "$file" -C "$RUNTIMES_DIR" || exit 1 ) || { echo "WARN: patched Node install failed (download/checksum/extract)." >&2; rm -rf "$tmp"; return 1; }
+    rm -rf "$tmp"
+    [ -x "$dir/bin/node" ] && { echo "$dir/bin"; return 0; }
+    return 1
+}
+pick_patched_node() {
+    local best="" bestver="0" v
+    for cand in "$RUNTIMES_DIR"/node-v*/bin/node /var/cw/systeam/node-v*/bin/node; do
+        [ -x "$cand" ] || continue
+        v="$("$cand" -v 2>/dev/null | sed 's/^v//')"; [ -n "$v" ] || continue
+        ver_ge "$v" "$NODE_MIN_PATCHED" || continue
+        ver_ge "$v" "$bestver" && { bestver="$v"; best="$cand"; }
+    done
+    echo "$best"
+}
+ensure_patched_node >/dev/null || echo "WARN: provisioning failed; using any already-installed patched runtime." >&2
+NODE_BIN="$(pick_patched_node)"
+if [ -z "$NODE_BIN" ]; then
+    echo "ERROR: No security-patched Node (>=$NODE_MIN_PATCHED) available and provisioning failed. Refusing to deploy onto a vulnerable runtime." >&2
+    exit 1
 fi
+export PATH="$(dirname "$NODE_BIN"):$PATH"
+echo "Using node $(node -v 2>/dev/null) ($(command -v node)), npm $(npm -v 2>/dev/null)"
 
 # Update current symlink
 ln -sfn "$DEPLOY_DIR" "$CURRENT_LINK"
@@ -417,6 +437,16 @@ if [ -n "$PM2_CMD" ]; then
     $PM2_CMD save
     echo "PM2 started"
     $PM2_CMD list
+    sleep 3
+    APP_PID="$($PM2_CMD pid "$PM2_APP_NAME" 2>/dev/null | head -n1)"
+    if [ -n "$APP_PID" ] && [ -r "/proc/$APP_PID/exe" ]; then
+        APP_NODE="$(/proc/$APP_PID/exe -v 2>/dev/null | sed 's/^v//')"
+        echo "$PM2_APP_NAME is running on node v$APP_NODE"
+        if [ -n "$APP_NODE" ] && ! ver_ge "$APP_NODE" "$NODE_MIN_PATCHED"; then
+            echo "WARNING: $PM2_APP_NAME is on UNPATCHED node v$APP_NODE (< $NODE_MIN_PATCHED). PM2 reused a cached interpreter." >&2
+            echo "         Recover: PATH=\"$(dirname "$NODE_BIN"):\$PATH\" $PM2_CMD restart $PM2_APP_NAME --update-env && $PM2_CMD save" >&2
+        fi
+    fi
 else
     echo "WARNING: PM2 not found. Install with: npm install -g pm2"
 fi
